@@ -59,8 +59,9 @@ const ViewInvoices = () => {
    * @param {number} invoice.items[0].rate - Unit price of the item (before VAT).
    * @param {number} invoice.grandTotal - The final total amount including VAT.
    */
-  function getAmountInWords(number) {
-    if (!Number.isFinite(number)) return 'Invalid Amount';
+  function getAmountInWords(num) {
+    if (typeof num !== "number" || isNaN(num)) return "Invalid Amount";
+  
     const a = [
       '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
       'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen',
@@ -68,44 +69,37 @@ const ViewInvoices = () => {
     ];
     const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
   
-    number = Math.floor(number);
-    if (number === 0) return 'Zero Dirhams Only';
+    function numToWords(n) {
+      if (n < 20) return a[n];
+      if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '');
+      if (n < 1000) return a[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' and ' + numToWords(n % 100) : '');
+      return '';
+    }
   
-    const numStr = number.toString().padStart(9, '0');
-    const n = numStr.match(/.{1,3}/g);
-    if (!n) return 'Invalid Amount';
+    const crore = Math.floor(num / 10000000);
+    num %= 10000000;
+    const lakh = Math.floor(num / 100000);
+    num %= 100000;
+    const thousand = Math.floor(num / 1000);
+    num %= 1000;
+    const hundred = Math.floor(num / 100);
+    const remainder = num % 100;
   
-    const makeWord = (num) => {
-      let str = '';
-      if (num >= 100) {
-        str += a[Math.floor(num / 100)] + ' Hundred ';
-        num %= 100;
-      }
-      if (num >= 20) {
-        str += b[Math.floor(num / 10)] + ' ';
-        num %= 10;
-      }
-      if (num > 0) {
-        str += a[num] + ' ';
-      }
-      return str.trim();
-    };
+    let words = '';
+    if (crore) words += numToWords(crore) + ' Crore ';
+    if (lakh) words += numToWords(lakh) + ' Lakh ';
+    if (thousand) words += numToWords(thousand) + ' Thousand ';
+    if (hundred) words += numToWords(hundred) + ' Hundred ';
+    if (remainder) words += (words ? 'and ' : '') + numToWords(remainder) + ' ';
   
-    const parts = [
-      { name: 'Crore', value: parseInt(n[0]) },
-      { name: 'Lakh', value: parseInt(n[1]) },
-      { name: 'Thousand', value: parseInt(n[2]) },
-      { name: '', value: parseInt(n[3]) }
-    ];
+    let fils = Math.round((num % 1) * 100); // Get Fils
+    if (fils > 0) {
+      words += ` and ${numToWords(fils)} Fils`;
+    }
   
-    const result = parts
-      .filter(p => p.value)
-      .map(p => `${makeWord(p.value)}${p.name ? ' ' + p.name : ''}`)
-      .join(' ')
-      .trim();
-  
-    return result + ' Dirhams Only';
+    return words.trim() + ' Dirhams Only';
   }
+  
   
 
 
