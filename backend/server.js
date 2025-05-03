@@ -13,7 +13,8 @@ const allowedOrigins = [
   'https://billing-git-main-atheeks-projects-bad38512.vercel.app',
   'http://localhost:5173',
   'https://billing-m6vq9w44l-atheeks-projects-bad38512.vercel.app',
-  'https://billing-nquy0sgnl-atheeks-projects-bad38512.vercel.ap/'
+  'https://billing-nquy0sgnl-atheeks-projects-bad38512.vercel.app',
+  'https://billing-nquy0sgnl-atheeks-projects-bad38512.vercel.app'
    // for local dev if needed
 ];
 
