@@ -83,26 +83,23 @@ const ViewInvoices = () => {
     const thousand = Math.floor(num / 1000);
     num %= 1000;
     const hundred = Math.floor(num / 100);
-    num %= 100;
-    const unit = Math.floor(num / 10);
-
-    const remainder = num % 10;
+    const remainder = num % 100;
   
     let words = '';
     if (crore) words += numToWords(crore) + ' Crore ';
     if (lakh) words += numToWords(lakh) + ' Lakh ';
     if (thousand) words += numToWords(thousand) + ' Thousand ';
     if (hundred) words += numToWords(hundred) + ' Hundred ';
-    if (unit) words += numToWords(unit) + ' unit ';
     if (remainder) words += (words ? 'and ' : '') + numToWords(remainder) + ' ';
   
     let fils = Math.round((num % 1) * 100); // Get Fils
     if (fils > 0) {
-      words += `Dirhams and ${numToWords(fils)} Fils only`;
+      words += ` and ${numToWords(fils)} Fils`;
     }
   
-    return words.trim() + ' Dirhams only';
+    return words.trim() + ' Dirhams Only';
   }
+  
   
   
 
