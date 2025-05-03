@@ -9,7 +9,7 @@ const app = express();
 
 // CORS configuration to allow Vercel frontend
 const allowedOrigins = [
-  'https://billing-blush.vercel.app/'
+  'https://billing-blush.vercel.app'
    // for local dev if needed
 ];
 
