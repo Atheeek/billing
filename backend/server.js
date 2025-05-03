@@ -8,8 +8,20 @@ require('dotenv').config(); // Load .env variables
 const app = express();
 
 // CORS configuration to allow Vercel frontend
+const allowedOrigins = [
+  'https://billing-juo62pm6y-atheeks-projects-bad38512.vercel.app',
+  'https://billing-git-main-atheeks-projects-bad38512.vercel.app',
+  'http://localhost:5173' // for local dev if needed
+];
+
 app.use(cors({
-  origin: 'hhttps://billing-juo62pm6y-atheeks-projects-bad38512.vercel.app/', // ✅ Replace with your actual Vercel domain
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
