@@ -9,15 +9,7 @@ const app = express();
 
 // CORS configuration to allow Vercel frontend
 const allowedOrigins = [
-  'https://billing-juo62pm6y-atheeks-projects-bad38512.vercel.app',
-  'https://billing-git-main-atheeks-projects-bad38512.vercel.app',
-  'http://localhost:5173',
-  'https://billing-m6vq9w44l-atheeks-projects-bad38512.vercel.app',
-  'https://billing-nquy0sgnl-atheeks-projects-bad38512.vercel.app',
-  'https://billing-nquy0sgnl-atheeks-projects-bad38512.vercel.app',
-  'https://billing-iqkf0ooak-atheeks-projects-bad38512.vercel.app',
-  'https://billing-bywxr4528-atheeks-projects-bad38512.vercel.app',
-  'https://billing-5quk6iep0-atheeks-projects-bad38512.vercel.app'
+  'https://billing-blush.vercel.app/'
    // for local dev if needed
 ];
 
