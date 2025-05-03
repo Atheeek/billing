@@ -9,7 +9,7 @@ const app = express();
 
 // CORS configuration to allow Vercel frontend
 app.use(cors({
-  origin: 'https://billing-8jwe90824-atheeks-projects-bad38512.vercel.app', // ✅ Replace with your actual Vercel domain
+  origin: 'https://billing-jdoefb8vf-atheeks-projects-bad38512.vercel.app', // ✅ Replace with your actual Vercel domain
   credentials: true
 }));
 
