@@ -53,23 +53,20 @@ const DashboardOverview = () => {
     const fetchDashboardData = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/invoices`);
-        const data = await res.json();
+        const data = await response.json(); // ✅ fixed line
         setInvoices(data);
-        setTotalSales(
-          data.reduce((acc, curr) => acc + (curr.grandTotal || 0), 0)
-        );
-        setPendingInvoices(data.filter(inv => !inv.paid).length); // adjust this logic if `paid` is not a field
-        const uniqueCustomers = Array.from(
-          new Set(data.map((inv) => inv.customer?.phone))
-        );
+        setTotalSales(data.reduce((acc, curr) => acc + (curr.grandTotal || 0), 0));
+        setPendingInvoices(data.filter(inv => !inv.paid).length);
+        const uniqueCustomers = Array.from(new Set(data.map(inv => inv.customer?.phone)));
         setCustomers(uniqueCustomers);
       } catch (error) {
         console.error('Failed to load dashboard data:', error);
       }
     };
-
+  
     fetchDashboardData();
   }, []);
+  
 
   return (
     <div>
