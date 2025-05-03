@@ -9,7 +9,7 @@ const ViewInvoices = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/invoices');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/invoices`);
         const data = await response.json();
         const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setInvoices(sortedData);

@@ -52,7 +52,7 @@ const DashboardOverview = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/invoices');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/invoices`);
         const data = await res.json();
         setInvoices(data);
         setTotalSales(
