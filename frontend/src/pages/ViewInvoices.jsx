@@ -58,9 +58,8 @@ const ViewInvoices = () => {
    * @param {string} [invoice.items[0].material] - Item material description (optional).
    * @param {number} invoice.items[0].rate - Unit price of the item (before VAT).
    * @param {number} invoice.grandTotal - The final total amount including VAT.
-   
    */
-  function getAmountInWordsUAE(num) {
+  function getAmountInWords(num) {
     // 1. Input Validation
     if (typeof num !== "number" || isNaN(num)) {
       return "Invalid Amount";
@@ -71,6 +70,9 @@ const ViewInvoices = () => {
       return "Zero Dirhams Only";
     }
   
+    // Use absolute value for conversion logic
+    const absNum = Math.abs(num);
+  
     // 2. Define Word Arrays
     const units = [
       '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
@@ -80,100 +82,111 @@ const ViewInvoices = () => {
     const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
   
     // 3. Helper function to convert numbers 0-999 to words
+    // Avoids adding "and" within the hundreds place for cleaner main logic
     function convertChunkToWords(n) {
-      if (n < 0 || n >= 1000) return ''; // Handle invalid input for chunk
-      if (n === 0) return ''; // Don't represent zero within chunks
+      if (n < 0 || n >= 1000) return ''; // Invalid chunk input
+      if (n === 0) return ''; // Don't represent zero within chunks unless it's the only value
   
       let words = '';
+      // Handle Hundreds
       if (n >= 100) {
         words += units[Math.floor(n / 100)] + ' Hundred';
         n %= 100;
-        if (n > 0) words += ' '; // Add space if there's more to come
+        if (n > 0) words += ' '; // Add space only if tens/units follow
       }
   
+      // Handle Tens and Units (0-99)
       if (n > 0) {
         if (n < 20) {
-          words += units[n];
+          words += units[n]; // Numbers 1-19
         } else {
-          words += tens[Math.floor(n / 10)];
+          words += tens[Math.floor(n / 10)]; // Tens (Twenty, Thirty, etc.)
           if (n % 10 > 0) {
-            words += ' ' + units[n % 10];
+            words += ' ' + units[n % 10]; // Units (1-9)
           }
         }
       }
       return words;
     }
   
-    // 4. Separate Integer (Dirhams) and Fractional (Fils) parts
-    const integerPart = Math.floor(Math.abs(num)); // Use absolute value for calculations
-    // Round fils carefully to handle potential floating point inaccuracies (e.g., 0.99999... * 100)
-    const filsPart = Math.round((Math.abs(num) - integerPart) * 100);
+    // 4. Separate Integer (Dirhams) and Fractional (Fils) parts *BEFORE* modifying the number
+    const integerPart = Math.floor(absNum);
+    // Round fils carefully to handle potential floating point inaccuracies (e.g., 0.99999... * 100 becomes 100, not 99)
+    // Multiply first, then round. Handle cases like 1.995 which should be 2 Dirhams 0 Fils.
+    const filsPart = Math.round((absNum - integerPart) * 100);
+  
+    // Recalculate integerPart if rounding Fils resulted in 100 (carry-over)
+    let adjustedIntegerPart = integerPart;
+    let adjustedFilsPart = filsPart;
+    if (filsPart === 100) {
+        adjustedIntegerPart += 1;
+        adjustedFilsPart = 0;
+    }
+  
   
     // 5. Convert Integer Part (Dirhams) to Words using Indian Numbering System
-    let dirhamWords = [];
-    let remainingAmount = integerPart;
+    let dirhamWordsArray = [];
+    let remainingAmount = adjustedIntegerPart;
   
-    if (remainingAmount === 0 && filsPart > 0) {
-      // If only Fils exist (e.g., 0.50), skip Dirham part conversion
-    } else if (remainingAmount === 0 && filsPart === 0){
-        // This case is handled by the initial num === 0 check, but added defensively
-         return "Zero Dirhams Only";
-    }
-    else {
+    if (remainingAmount > 0) {
       const crore = Math.floor(remainingAmount / 10000000);
       remainingAmount %= 10000000;
       if (crore > 0) {
-        dirhamWords.push(convertChunkToWords(crore) + ' Crore');
+        dirhamWordsArray.push(convertChunkToWords(crore) + ' Crore');
       }
   
       const lakh = Math.floor(remainingAmount / 100000);
       remainingAmount %= 100000;
       if (lakh > 0) {
-        dirhamWords.push(convertChunkToWords(lakh) + ' Lakh');
+        dirhamWordsArray.push(convertChunkToWords(lakh) + ' Lakh');
       }
   
       const thousand = Math.floor(remainingAmount / 1000);
       remainingAmount %= 1000;
       if (thousand > 0) {
-        dirhamWords.push(convertChunkToWords(thousand) + ' Thousand');
+        dirhamWordsArray.push(convertChunkToWords(thousand) + ' Thousand');
       }
   
       // Handle the remaining part (0-999)
       if (remainingAmount > 0) {
-        dirhamWords.push(convertChunkToWords(remainingAmount));
+        dirhamWordsArray.push(convertChunkToWords(remainingAmount));
       }
+    }
   
-       // Add "Dirhams" if there was an integer part > 0
-       if (integerPart > 0) {
-           dirhamWords.push('Dirhams');
-       }
+    // Join Dirham words and add the currency name if applicable
+    let dirhamWordsString = dirhamWordsArray.join(' ');
+    if (adjustedIntegerPart > 0) {
+        dirhamWordsString += (dirhamWordsString ? ' ' : '') + 'Dirhams'; // Add space if words exist
     }
   
   
     // 6. Convert Fils Part to Words
-    let filsWords = '';
-    if (filsPart > 0) {
-      filsWords = convertChunkToWords(filsPart) + ' Fils';
+    let filsWordsString = '';
+    if (adjustedFilsPart > 0) {
+      filsWordsString = convertChunkToWords(adjustedFilsPart) + ' Fils';
     }
   
     // 7. Combine Dirhams and Fils parts
-    let finalWords = [];
-    if (dirhamWords.length > 0) {
-        finalWords.push(dirhamWords.join(' '));
+    let finalWords = '';
+    if (dirhamWordsString) {
+        finalWords += dirhamWordsString;
     }
   
-    if (filsWords) {
-        if (finalWords.length > 0) { // Add 'and' only if Dirhams exist
-            finalWords.push('and');
+    if (filsWordsString) {
+        if (finalWords) { // Add 'and' only if Dirhams exist
+            finalWords += ' and ';
         }
-        finalWords.push(filsWords);
+        finalWords += filsWordsString;
     }
+  
+     // If after all calculations, the result is empty (e.g., input was 0 but missed initial check), return zero
+     if (!finalWords && adjustedIntegerPart === 0 && adjustedFilsPart === 0) {
+         return "Zero Dirhams Only";
+     }
   
     // Add "Only" suffix
-    return finalWords.join(' ').trim() + ' Only';
+    return finalWords.trim() + ' Only';
   }
-  
-  
   
 
 
