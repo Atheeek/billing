@@ -9,10 +9,11 @@ export default defineConfig({
     port: 3000,
     allowedHosts: [
       '4ee8-2409-40f2-1041-3c7c-997f-47ed-bc02-c327.ngrok-free.app'
-    ]
+    ],
+    historyApiFallback: true // <== merged here
   },
   build: {
     outDir: 'dist',
   },
-  base: './',
+  base: './'
 })
