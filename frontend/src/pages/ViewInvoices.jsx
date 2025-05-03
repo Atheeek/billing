@@ -58,8 +58,7 @@ const ViewInvoices = () => {
    * @param {string} [invoice.items[0].material] - Item material description (optional).
    * @param {number} invoice.items[0].rate - Unit price of the item (before VAT).
    * @param {number} invoice.grandTotal - The final total amount including VAT.
-   *@param {number} num The numeric amount to convert.
- * @returns {string} The amount in words or "Invalid Amount".
+   
    */
   function getAmountInWordsUAE(num) {
     // 1. Input Validation
