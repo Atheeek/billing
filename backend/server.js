@@ -2,22 +2,33 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes.js');
-const invoiceRoutes = require('./routes/invoiceRoutes.js'); // Import the invoice routes
+const invoiceRoutes = require('./routes/invoiceRoutes.js');
+require('dotenv').config(); // Load .env variables
 
 const app = express();
-app.use(cors());
-app.use(express.json());  // Middleware to parse JSON bodies
+
+// CORS configuration to allow Vercel frontend
+app.use(cors({
+  origin: 'https://billing-8jwe90824-atheeks-projects-bad38512.vercel.app/p', // ✅ Replace with your actual Vercel domain
+  credentials: true
+}));
+
+app.use(express.json());
 
 // Routes
 app.use('/api/users', userRoutes);
-app.use('/api/invoices', invoiceRoutes);  // Add the invoices route
+app.use('/api/invoices', invoiceRoutes);
 
-// Connect to MongoDB
-mongoose.connect('mongodb+srv://atheek163:CbxxzfYLPyTQxRUq@billingcollection.padu26t.mongodb.net/billingdata', { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Could not connect to MongoDB:', err));
+// Connect to MongoDB using environment variable
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('Could not connect to MongoDB:', err));
 
 // Start the server
-app.listen(5000, () => {
-  console.log('Server is running on http://localhost:5000');
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
