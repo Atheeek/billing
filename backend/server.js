@@ -16,7 +16,8 @@ const allowedOrigins = [
   'https://billing-nquy0sgnl-atheeks-projects-bad38512.vercel.app',
   'https://billing-nquy0sgnl-atheeks-projects-bad38512.vercel.app',
   'https://billing-iqkf0ooak-atheeks-projects-bad38512.vercel.app',
-  'https://billing-bywxr4528-atheeks-projects-bad38512.vercel.app'
+  'https://billing-bywxr4528-atheeks-projects-bad38512.vercel.app',
+  'https://billing-5quk6iep0-atheeks-projects-bad38512.vercel.app'
    // for local dev if needed
 ];
 
