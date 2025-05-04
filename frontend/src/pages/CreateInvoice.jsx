@@ -4,7 +4,7 @@ const CreateInvoice = () => {
   const [customer, setCustomer] = useState({ name: '', phone: '', address: '' });
   const [items, setItems] = useState([{ type: '', itemName: '', weight: '', rate: '', amount: 0 }]);
   const [successMessage, setSuccessMessage] = useState('');
-  const VAT_RATE = 5;  // Updated VAT rate for UAE
+  const GST_RATE = 5;
 
   const handleCustomerChange = (e) => {
     setCustomer({ ...customer, [e.target.name]: e.target.value });
@@ -33,12 +33,12 @@ const CreateInvoice = () => {
   };
 
   const calculateSubtotal = () => items.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
-  const calculateVAT = (subtotal) => (subtotal * VAT_RATE) / 100;  // Updated to VAT
-  const calculateTotal = (subtotal, vat) => subtotal + vat;
+  const calculateGST = (subtotal) => (subtotal * GST_RATE) / 100;
+  const calculateTotal = (subtotal, gst) => subtotal + gst;
 
   const subtotal = calculateSubtotal();
-  const vatAmount = calculateVAT(subtotal);  // Updated to VAT
-  const grandTotal = calculateTotal(subtotal, vatAmount);
+  const gstAmount = calculateGST(subtotal);
+  const grandTotal = calculateTotal(subtotal, gstAmount);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,13 +53,14 @@ const CreateInvoice = () => {
         amount: parseFloat(item.amount) || 0
       })),
       subtotal,
-      vatAmount,  // Updated to VAT
+      gstAmount,
       grandTotal,
       date: new Date().toISOString()
     };
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/invoices`, {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(invoiceData),
@@ -138,7 +139,7 @@ const CreateInvoice = () => {
 
           <div className="text-right space-y-2 text-lg mt-6">
             <div>Subtotal: ₹ {subtotal.toFixed(2)}</div>
-            <div>VAT ({VAT_RATE}%): ₹ {vatAmount.toFixed(2)}</div> {/* Updated to VAT */}
+            <div>VAT ({GST_RATE}%): ₹ {gstAmount.toFixed(2)}</div>
             <div className="font-bold text-2xl text-yellow-700">Grand Total: ₹ {grandTotal.toFixed(2)}</div>
           </div>
 
