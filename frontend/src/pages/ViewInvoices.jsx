@@ -532,7 +532,7 @@ const myInvoiceData = {
                           {formatIndianCurrency(invoice.subtotal)}
                         </td>
                         <td className="border px-3 py-2" rowSpan={invoice.items.length}>
-                          {formatIndianCurrency(invoice.vatAmount)}
+                          {formatIndianCurrency(invoice.gstAmount)}
                         </td>
                         <td className="border px-3 py-2 font-bold text-green-700" rowSpan={invoice.items.length}>
                           {formatIndianCurrency(invoice.grandTotal)}
