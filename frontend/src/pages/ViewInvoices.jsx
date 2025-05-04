@@ -509,7 +509,7 @@ const myInvoiceData = {
                 <th className="py-3 px-4 border">Rate (₹)</th>
                 <th className="py-3 px-4 border">Amount (₹)</th>
                 <th className="py-3 px-4 border">Subtotal</th>
-                <th className="py-3 px-4 border">GST (3%)</th>
+                <th className="py-3 px-4 border">VAT (5%)</th>
                 <th className="py-3 px-4 border font-bold text-green-700">Grand Total</th>
                 <th className="py-3 px-4 border">Actions</th>
               </tr>
