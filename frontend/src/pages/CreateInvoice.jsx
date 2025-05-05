@@ -138,9 +138,9 @@ const CreateInvoice = () => {
           </button>
 
           <div className="text-right space-y-2 text-lg mt-6">
-            <div>Subtotal: ₹ {subtotal.toFixed(2)}</div>
-            <div>VAT ({GST_RATE}%): ₹ {gstAmount.toFixed(2)}</div>
-            <div className="font-bold text-2xl text-yellow-700">Grand Total: ₹ {grandTotal.toFixed(2)}</div>
+            <div>Subtotal: AED {subtotal.toFixed(2)}</div>
+            <div>VAT ({GST_RATE}%): AED {gstAmount.toFixed(2)}</div>
+            <div className="font-bold text-2xl text-yellow-700">Grand Total: AED {grandTotal.toFixed(2)}</div>
           </div>
 
           <div className="text-center">

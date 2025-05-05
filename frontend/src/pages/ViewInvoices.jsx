@@ -506,8 +506,8 @@ const myInvoiceData = {
                 <th className="py-3 px-4 border">Phone</th>
                 <th className="py-3 px-4 border">Item Type</th>
                 <th className="py-3 px-4 border">Weight (g)</th>
-                <th className="py-3 px-4 border">Rate (₹)</th>
-                <th className="py-3 px-4 border">Amount (₹)</th>
+                <th className="py-3 px-4 border">Rate </th>
+                <th className="py-3 px-4 border">Amount </th>
                 <th className="py-3 px-4 border">Subtotal</th>
                 <th className="py-3 px-4 border">VAT (5%)</th>
                 <th className="py-3 px-4 border font-bold text-green-700">Grand Total</th>
@@ -524,18 +524,18 @@ const myInvoiceData = {
                     <td className="border px-3 py-2">{invoice.customer.phone}</td>
                     <td className="border px-3 py-2">{item.type}</td>
                     <td className="border px-3 py-2">{item.weight.toFixed(2)}</td>
-                    <td className="border px-3 py-2">{formatIndianCurrency(item.rate)}</td>
-                    <td className="border px-3 py-2">{formatIndianCurrency(item.amount)}</td>
+                    <td className="border px-3 py-2">AED {item.rate}</td>
+                    <td className="border px-3 py-2">AED {item.amount}</td>
                     {index === 0 ? (
                       <>
                         <td className="border px-3 py-2" rowSpan={invoice.items.length}>
-                          {formatIndianCurrency(invoice.subtotal)}
+                         AED {invoice.subtotal}
                         </td>
                         <td className="border px-3 py-2" rowSpan={invoice.items.length}>
-                          {formatIndianCurrency(invoice.gstAmount)}
+                         AED {invoice.gstAmount}
                         </td>
                         <td className="border px-3 py-2 font-bold text-green-700" rowSpan={invoice.items.length}>
-                          {formatIndianCurrency(invoice.grandTotal)}
+                         AED {invoice.grandTotal}
                         </td>
                         <td className="border px-3 py-2" rowSpan={invoice.items.length}>
                           <button
