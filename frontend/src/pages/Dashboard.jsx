@@ -73,7 +73,7 @@ const DashboardOverview = () => {
       <h2 className="text-3xl font-bold mb-6 text-gray-800 font-serif">Welcome Back!</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <StatCard icon={<DollarSignIcon />} label="Total Sales" value={`₹ ${totalSales.toFixed(2)}`} color="yellow" />
+        <StatCard icon={<DollarSignIcon />} label="Total Sales" value={`AED ${totalSales.toFixed(2)}`} color="yellow" />
         <StatCard icon={<ClockIcon />} label="Pending Invoices" value={pendingInvoices} color="blue" />
         <StatCard icon={<UsersIcon />} label="Unique Customers" value={customers.length} color="purple" />
       </div>
