@@ -335,18 +335,8 @@ const ViewInvoices = () => {
       head: [['Sl.No', 'Description', 'Qty', 'Unit Price', 'VAT 5%', 'Total']],
       body: tableBody,
       theme: 'plain',
-      styles: {
-        fontSize: 9,
-        cellPadding: 2,
-        valign: 'top',
-        minCellHeight: 8 // 🔒 fixed row height
-      },
-      headStyles: {
-        fillColor: [240, 240, 240],
-        fontStyle: 'bold',
-        halign: 'center',
-        valign: 'middle'
-      },
+      styles: { fontSize: 9, cellPadding: 2, valign: 'top' },
+      headStyles: { fillColor: [240, 240, 240], fontStyle: 'bold', halign: 'center', valign: 'middle' },
       columnStyles: {
         0: { halign: 'center', cellWidth: 12 },
         1: { cellWidth: 'auto' },
@@ -359,10 +349,24 @@ const ViewInvoices = () => {
       didDrawCell: (data) => {
         doc.setLineWidth(0.1);
         doc.setDrawColor(180, 180, 180);
-        // Same draw logic as before
+        if (data.column.index < data.table.columns.length - 1) {
+          doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+        }
+        if (data.section === 'head') {
+          doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+        }
+        if (data.section === 'body' && data.row.index === data.table.body.length - 2) {
+          doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+        }
+        if (data.column.index === 0) doc.line(data.cell.x, data.cell.y, data.cell.x, data.cell.y + data.cell.height);
+        if (data.column.index === data.table.columns.length - 1)
+          doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+        if (data.section === 'head' && data.row.index === 0)
+          doc.line(data.cell.x, data.cell.y, data.cell.x + data.cell.width, data.cell.y);
+        if (data.section === 'body' && data.row.index === data.table.body.length - 1)
+          doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
       }
     });
-    
   
     const finalTableY = doc.lastAutoTable.finalY;
     const amountInWords = getAmountInWords(grandTotal);
