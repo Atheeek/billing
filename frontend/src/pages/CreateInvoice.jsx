@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const CreateInvoice = () => {
   const [customer, setCustomer] = useState({ name: '', phone: '', address: '' });
-  const [items, setItems] = useState([{ type: '', itemName: '', weight: '', rate: '', amount: 0 }]);
+  const [items, setItems] = useState([{ type: '', itemName: '', weight: '', rate: '', clarity: '', ct: '', color: '', amount: 0 }]);
   const [successMessage, setSuccessMessage] = useState('');
   const GST_RATE = 5;
 
@@ -24,7 +24,7 @@ const CreateInvoice = () => {
   };
 
   const addNewItem = () => {
-    setItems([...items, { type: '', itemName: '', weight: '', rate: '', amount: 0 }]);
+    setItems([...items, { type: '', itemName: '', weight: '', rate: '', clarity: '', ct: '', color: '', amount: 0 }]);
   };
 
   const removeItem = (index) => {
@@ -50,6 +50,9 @@ const CreateInvoice = () => {
         itemName: item.itemName,
         weight: parseFloat(item.weight) || 0,
         rate: parseFloat(item.rate) || 0,
+        clarity: item.clarity,
+        ct: parseFloat(item.ct) || 0,
+        color: item.color,
         amount: parseFloat(item.amount) || 0
       })),
       subtotal,
@@ -60,7 +63,6 @@ const CreateInvoice = () => {
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/invoices`, {
-
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(invoiceData),
@@ -70,7 +72,7 @@ const CreateInvoice = () => {
       if (response.ok) {
         setSuccessMessage(`Invoice #${data.invoice.invoiceNumber} created successfully!`);
         setCustomer({ name: '', phone: '', address: '' });
-        setItems([{ type: '', itemName: '', weight: '', rate: '', amount: 0 }]);
+        setItems([{ type: '', itemName: '', weight: '', rate: '', clarity: '', ct: '', color: '', amount: 0 }]);
       } else {
         setSuccessMessage(`Error: ${data.message}`);
       }
@@ -104,56 +106,33 @@ const CreateInvoice = () => {
           <hr className="border-t-2 border-gray-200" />
 
           {items.map((item, index) => (
-            <div key={index} className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
-              <select
-                value="Diamond"
-                onChange={(e) => handleItemChange(index, 'type', e.target.value)}
-                className="border p-3 rounded-lg"
-                required
-              >
-                <option value="Diamond">Diamond</option>
-              </select>
+            <div key={index} className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center">
               <select value={item.type} onChange={(e) => handleItemChange(index, 'type', e.target.value)}
                 className="border p-3 rounded-lg" required>
                 <option value="" disabled>Select Type</option>
-
-
-                <option value="Yellow Gold 18K">Yellow Gold 18K </option>
-                <option value="White Gold 18K">White Gold 18K </option>
-                <option value="Rose Gold 18K">Rose Gold 18K </option>
-
+                <option value="Yellow Gold 18K">Yellow Gold 18K</option>
+                <option value="White Gold 18K">White Gold 18K</option>
+                <option value="Rose Gold 18K">Rose Gold 18K</option>
               </select>
               <input placeholder="Item Name" value={item.itemName}
                 onChange={(e) => handleItemChange(index, 'itemName', e.target.value)}
-                className="border p-3 rounded-lg" />
-
-
-
+                className="border p-3 rounded-lg" required />
               <input type="number" step="0.01" placeholder="Weight (g)" value={item.weight}
                 onChange={(e) => handleItemChange(index, 'weight', e.target.value)}
                 className="border p-3 rounded-lg" required />
-              <input
-                type="text"
-                placeholder="Clarity"
-                value={item.clarity}
+              <input type="text" placeholder="Clarity" value={item.clarity}
                 onChange={(e) => handleItemChange(index, 'clarity', e.target.value.toUpperCase())}
-                className="border p-3 rounded-lg"
-                required
-              />
-
-              <input type="number" step="0.01" placeholder="Carrot (CT) " value={item.ct}
+                className="border p-3 rounded-lg" required />
+              <input type="number" step="0.01" placeholder="Carrot (CT)" value={item.ct}
                 onChange={(e) => handleItemChange(index, 'ct', e.target.value)}
                 className="border p-3 rounded-lg" required />
-              <input type="text" step="0.01" placeholder="Color " value={item.color}
+              <input type="text" placeholder="Color" value={item.color}
                 onChange={(e) => handleItemChange(index, 'color', e.target.value.toUpperCase())}
                 className="border p-3 rounded-lg" required />
-
               <input type="number" step="0.01" placeholder="Rate" value={item.rate}
                 onChange={(e) => handleItemChange(index, 'rate', e.target.value)}
                 className="border p-3 rounded-lg" required />
-
               <input value={item.amount} readOnly className="border p-3 rounded-lg bg-gray-100" />
-
               <button type="button" onClick={() => removeItem(index)} className="text-red-600">Remove</button>
             </div>
           ))}

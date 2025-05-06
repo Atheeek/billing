@@ -505,6 +505,10 @@ const myInvoiceData = {
                 <th className="py-3 px-4 border">Customer Name</th>
                 <th className="py-3 px-4 border">Phone</th>
                 <th className="py-3 px-4 border">Item Type</th>
+                <th className="py-3 px-4 border">Item Name</th>
+                <th className="py-3 px-4 border">Clarity</th>
+                <th className="py-3 px-4 border">CT</th>
+                <th className="py-3 px-4 border">Color</th>
                 <th className="py-3 px-4 border">Weight (g)</th>
                 <th className="py-3 px-4 border">Rate </th>
                 <th className="py-3 px-4 border">Amount </th>
@@ -523,9 +527,13 @@ const myInvoiceData = {
                     <td className="border px-3 py-2">{invoice.customer.name}</td>
                     <td className="border px-3 py-2">{invoice.customer.phone}</td>
                     <td className="border px-3 py-2">{item.type}</td>
+                    <td className="border px-3 py-2">{item.itemName}</td>
+                    <td className="border px-3 py-2">{item.clarity}</td>
+                    <td className="border px-3 py-2">{item.ct}</td>
                     <td className="border px-3 py-2">{item.weight.toFixed(2)}</td>
                     <td className="border px-3 py-2">AED {item.rate}</td>
                     <td className="border px-3 py-2">AED {item.amount}</td>
+
                     {index === 0 ? (
                       <>
                         <td className="border px-3 py-2" rowSpan={invoice.items.length}>
