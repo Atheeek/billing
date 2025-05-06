@@ -22,7 +22,21 @@ const ViewInvoices = () => {
 
     fetchInvoices();
   }, []);
-
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const desiredTableHeightFraction = 3 / 4;
+  const maxTableHeightOnPage = pageHeight * desiredTableHeightFraction;
+  
+  const tableBottomLimitY = tableStartY + maxTableHeightOnPage;
+  
+  let effectiveMarginBottom = pageHeight - tableBottomLimitY;
+  
+  if (effectiveMarginBottom < 0) {
+      console.warn("Calculated table bottom limit exceeds page height. Adjusting startY or desired fraction.");
+      effectiveMarginBottom = 10;
+  } else if (effectiveMarginBottom < 10) {
+      effectiveMarginBottom = 10;
+  }
+  
   const formatIndianCurrency = (amount, showSymbol = true) => {
     const options = {
       style: 'decimal',
@@ -338,35 +352,51 @@ const ViewInvoices = () => {
       styles: { fontSize: 9, cellPadding: 2, valign: 'top' },
       headStyles: { fillColor: [240, 240, 240], fontStyle: 'bold', halign: 'center', valign: 'middle' },
       columnStyles: {
-        0: { halign: 'center', cellWidth: 12 },
-        1: { cellWidth: 'auto' },
-        2: { halign: 'center', cellWidth: 14 },
-        3: { halign: 'right', cellWidth: 22 },
-        4: { halign: 'right', cellWidth: 22 },
-        5: { halign: 'right', cellWidth: 25 },
+          0: { halign: 'center', cellWidth: 12 },
+          1: { cellWidth: 'auto' },
+          2: { halign: 'center', cellWidth: 14 },
+          3: { halign: 'right', cellWidth: 22 },
+          4: { halign: 'right', cellWidth: 22 },
+          5: { halign: 'right', cellWidth: 25 },
       },
-      margin: { left: leftMargin, right: rightMargin },
+      margin: {
+          left: leftMargin,
+          right: rightMargin,
+          top: tableStartY,
+          bottom: effectiveMarginBottom
+      },
+      didDrawPage: (data) => {
+      },
       didDrawCell: (data) => {
-        doc.setLineWidth(0.1);
-        doc.setDrawColor(180, 180, 180);
-        if (data.column.index < data.table.columns.length - 1) {
-          doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
-        }
-        if (data.section === 'head') {
-          doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
-        }
-        if (data.section === 'body' && data.row.index === data.table.body.length - 2) {
-          doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
-        }
-        if (data.column.index === 0) doc.line(data.cell.x, data.cell.y, data.cell.x, data.cell.y + data.cell.height);
-        if (data.column.index === data.table.columns.length - 1)
-          doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
-        if (data.section === 'head' && data.row.index === 0)
-          doc.line(data.cell.x, data.cell.y, data.cell.x + data.cell.width, data.cell.y);
-        if (data.section === 'body' && data.row.index === data.table.body.length - 1)
-          doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+          doc.setLineWidth(0.1);
+          doc.setDrawColor(180, 180, 180);
+  
+          if (data.column.index < data.table.columns.length - 1) {
+              doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+          }
+  
+          if (data.section === 'head') {
+              doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+          }
+  
+          if (data.section === 'body' && data.row.index === data.table.body.length - 2) {
+              doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+          }
+  
+          if (data.column.index === 0) {
+              doc.line(data.cell.x, data.cell.y, data.cell.x, data.cell.y + data.cell.height);
+          }
+          if (data.column.index === data.table.columns.length - 1) {
+              doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+          }
+          if (data.section === 'head' && data.row.index === 0) {
+              doc.line(data.cell.x, data.cell.y, data.cell.x + data.cell.width, data.cell.y);
+          }
+          if (data.section === 'body' && data.row.index === data.table.body.length - 1) {
+              doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+          }
       }
-    });
+  });
   
     const finalTableY = doc.lastAutoTable.finalY;
     const amountInWords = getAmountInWords(grandTotal);
