@@ -304,7 +304,7 @@ const ViewInvoices = () => {
         item.clarity && `Clarity: ${item.clarity}`,
         item.color && `Color: ${item.color}`,
         item.material && `Material: ${item.material}`,
-        item.type && `${item.type} - ${item.weight}`,
+        item.type && `${item.type} - ${item.weight}GM`,
       ].filter(Boolean).join('\n\n');
       
     // Note the double \n for extra space
