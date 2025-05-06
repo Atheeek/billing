@@ -105,21 +105,47 @@ const CreateInvoice = () => {
 
           {items.map((item, index) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+              <select
+                value="Diamond"
+                onChange={(e) => handleItemChange(index, 'type', e.target.value)}
+                className="border p-3 rounded-lg"
+                required
+              >
+                <option value="Diamond">Diamond</option>
+              </select>
               <select value={item.type} onChange={(e) => handleItemChange(index, 'type', e.target.value)}
                 className="border p-3 rounded-lg" required>
-                <option value="">Select Type</option>
-                <option value="Gold">Gold</option>
-                <option value="Silver">Silver</option>
-                <option value="Diamond">Diamond</option>
-                <option value="Platinum">Platinum</option>
-              </select>
+                <option value="" disabled>Select Type</option>
 
+
+                <option value="Yellow Gold 18K">Yellow Gold 18K </option>
+                <option value="White Gold 18K">White Gold 18K </option>
+                <option value="Rose Gold 18K">Rose Gold 18K </option>
+
+              </select>
               <input placeholder="Item Name" value={item.itemName}
                 onChange={(e) => handleItemChange(index, 'itemName', e.target.value)}
                 className="border p-3 rounded-lg" />
 
+
+
               <input type="number" step="0.01" placeholder="Weight (g)" value={item.weight}
                 onChange={(e) => handleItemChange(index, 'weight', e.target.value)}
+                className="border p-3 rounded-lg" required />
+              <input
+                type="text"
+                placeholder="Clarity"
+                value={item.clarity}
+                onChange={(e) => handleItemChange(index, 'clarity', e.target.value.toUpperCase())}
+                className="border p-3 rounded-lg"
+                required
+              />
+
+              <input type="number" step="0.01" placeholder="Carrot (CT) " value={item.ct}
+                onChange={(e) => handleItemChange(index, 'ct', e.target.value)}
+                className="border p-3 rounded-lg" required />
+              <input type="text" step="0.01" placeholder="Color " value={item.color}
+                onChange={(e) => handleItemChange(index, 'color', e.target.value.toUpperCase())}
                 className="border p-3 rounded-lg" required />
 
               <input type="number" step="0.01" placeholder="Rate" value={item.rate}
