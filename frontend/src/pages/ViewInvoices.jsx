@@ -297,13 +297,14 @@ const ViewInvoices = () => {
   
       const desc = [
         // `${item.itemName}${item.type ? ` – ${item.itemName}` : ''}`,
-        item.itemName && `Diamond: ${item.itemName}`,
-        item.type && `: ${item.type}`,
+        item.itemName && `Diamond ${item.itemName}`,
+      
        
-        item.ct && `: ${item.ct} CT`,
+        item.ct && `Diamond: ${item.ct} CT`,
         item.clarity && `Clarity: ${item.clarity}`,
         item.color && `Color: ${item.color}`,
-        item.material && `Material: ${item.material}`
+        item.material && `Material: ${item.material}`,
+        item.type && ` ${item.type}`,
       ].filter(Boolean).join('\n');
       
   
