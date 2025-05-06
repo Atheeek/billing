@@ -70,7 +70,7 @@ const CreateInvoice = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setSuccessMessage(`Invoice #${data.invoice.invoiceNumber} created successfully!`);
+        setSuccessMessage(`Invoice created successfully!`);
         setCustomer({ name: '', phone: '', address: '' });
         setItems([{ type: '', itemName: '', weight: '', rate: '', clarity: '', ct: '', color: '', amount: 0 }]);
       } else {
