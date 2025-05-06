@@ -530,6 +530,7 @@ const myInvoiceData = {
                     <td className="border px-3 py-2">{item.itemName}</td>
                     <td className="border px-3 py-2">{item.clarity}</td>
                     <td className="border px-3 py-2">{item.ct}</td>
+                    <td className="border px-3 py-2">{item.color}</td>
                     <td className="border px-3 py-2">{item.weight.toFixed(2)}</td>
                     <td className="border px-3 py-2">AED {item.rate}</td>
                     <td className="border px-3 py-2">AED {item.amount}</td>
