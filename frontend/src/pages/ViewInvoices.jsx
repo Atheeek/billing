@@ -304,7 +304,7 @@ const ViewInvoices = () => {
         item.clarity && `Clarity: ${item.clarity}`,
         item.color && `Color: ${item.color}`,
         item.material && `Material: ${item.material}`,
-        item.type && `${item.type} - ${item.weight}GM`,
+        item.type && `${item.type} - ${item.weight} GM`,
       ].filter(Boolean).join('\n\n');
       
     // Note the double \n for extra space
@@ -332,7 +332,7 @@ const ViewInvoices = () => {
   
     autoTable(doc, {
       startY: tableStartY,
-      head: [['Sl.No.', 'Description', 'Qty', 'Unit Price', 'VAT 5%', 'Total']],
+      head: [['Sl.No', 'Description', 'Qty', 'Unit Price', 'VAT 5%', 'Total']],
       body: tableBody,
       theme: 'plain',
       styles: { fontSize: 9, cellPadding: 2, valign: 'top' },
