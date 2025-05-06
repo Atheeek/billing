@@ -290,7 +290,7 @@ const ViewInvoices = () => {
     const maxTableRows = Math.floor((pageHeight * 0.75 - tableStartY) / approxRowHeight);
   
     const tableBody = invoice.items.map((item, index) => {
-      const qty = item.weight?.toFixed(2) || '0.00';
+      const qty = String(index + 1).padStart(2, '0'); // Format as 01, 02, 03, etc.
       const unitPrice = item.rate?.toFixed(2) || '0.00';
       const vat = (item.amount * 0.05).toFixed(2);
       const total = (item.amount + parseFloat(vat)).toFixed(2);
@@ -304,8 +304,10 @@ const ViewInvoices = () => {
         item.clarity && `Clarity: ${item.clarity}`,
         item.color && `Color: ${item.color}`,
         item.material && `Material: ${item.material}`,
-        item.type && ` ${item.type}`,
-      ].filter(Boolean).join('\n');
+        item.type && `${item.type} - ${item.weight}`,
+      ].filter(Boolean).join('\n\n');
+      
+    // Note the double \n for extra space
       
   
       return [
