@@ -10,6 +10,9 @@ const invoiceSchema = new mongoose.Schema({
   items: [{
     type: { type: String, required: true },
     itemName: { type: String, required: false },
+    clarity: { type: String, required: true },
+    ct: { type: String, required: true },
+    color: { type: String, required: true },
     weight: { type: Number, required: true },
     rate: { type: Number, required: true },
     amount: { type: Number, required: true }
