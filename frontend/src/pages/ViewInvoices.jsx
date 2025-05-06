@@ -296,8 +296,11 @@ const ViewInvoices = () => {
       const total = (item.amount + parseFloat(vat)).toFixed(2);
   
       const desc = [
-        `${item.itemName}${item.type ? ` – ${item.itemName}` : 'Diamond'}`,
-        item.ct && `Diamond: ${item.ct} CT`,
+        // `${item.itemName}${item.type ? ` – ${item.itemName}` : ''}`,
+        item.itemName && `Diamond: ${item.itemName}`,
+        item.type && `: ${item.type}`,
+       
+        item.ct && `: ${item.ct} CT`,
         item.clarity && `Clarity: ${item.clarity}`,
         item.color && `Color: ${item.color}`,
         item.material && `Material: ${item.material}`
