@@ -362,10 +362,10 @@ const ViewInvoices = () => {
   return (
     // Adjust overall container height based on your app's header/navbar height
     // e.g., if navbar is 64px (4rem), then height is calc(100vh - 4rem)
-    <div className="container mx-auto px-2 sm:px-4 py-6 flex flex-col" style={{ height: 'calc(100vh - 4rem)' }}>
-      <h1 className="text-2xl font-bold mb-4 text-center text-gray-800 flex-shrink-0">
+    <div className="container mx-auto px-0 sm:px-0 py-0 flex flex-col" style={{ height: 'calc(100vh - 4rem)' }}>
+      {/* <h1 className="text-2xl font-bold mb-4 text-center text-gray-800 flex-shrink-0">
         All Invoices
-      </h1>
+      </h1> */}
 
       {invoices.length > 0 ? (
         <div className="flex-grow shadow-lg overflow-hidden border border-gray-200 rounded-lg">
