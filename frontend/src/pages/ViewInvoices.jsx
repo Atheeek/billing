@@ -395,7 +395,7 @@ const ViewInvoices = () => {
       {invoices.length > 0 ? (
         <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200"> {/* overflow-x-auto kept as fallback */}
           <table className="min-w-full bg-white border-collapse table-auto"> {/* table-auto lets columns size based on content */}
-            <thead className="bg-gray-600">
+            <thead className="bg-gray-600 text-white">
               <tr>
                 <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-16 min-w-[4rem]">Inv No</th> {/* Abbreviated header, min-width */}
                 <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-20 min-w-[5rem]">Date</th> {/* Min-width */}
