@@ -368,7 +368,7 @@ const ViewInvoices = () => {
       </h1> */}
 
       {invoices.length > 0 ? (
-        <div className="flex-grow shadow-lg overflow-hidden border border-gray-200 rounded-lg">
+        <div className="flex-grow shadow-lg  border border-gray-200 rounded-lg">
           {/* This div handles both horizontal and vertical scrolling for the table */}
           {/* Adjust maxHeight: 10rem is an estimate for title, page padding, etc. */}
           <div className="overflow-auto bg-white" style={{ maxHeight: 'calc(100vh - 10rem)' }}>
