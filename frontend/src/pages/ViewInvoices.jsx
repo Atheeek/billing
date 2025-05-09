@@ -374,7 +374,7 @@ const ViewInvoices = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 py-8">
+    <div className="container mx-auto px-0 sm:px-0 py-0">
       {/* <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">All Invoices</h1> */}
 
       {invoices.length > 0 ? (
