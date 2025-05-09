@@ -28,7 +28,7 @@ const Dashboard = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white shadow-md p-4 px-6 z-10">
-          <h1 className="text-2xl font-semibold text-gray-700">{currentTitle}</h1>
+          <h1 className="text-2xl flex justify-center font-semibold text-gray-700">{currentTitle}</h1>
         </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 lg:p-8">
           <Routes>
