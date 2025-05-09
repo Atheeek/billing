@@ -375,7 +375,7 @@ const ViewInvoices = () => {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">All Invoices</h1>
+      {/* <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">All Invoices</h1> */}
 
       {invoices.length > 0 ? (
         <div className="shadow-lg overflow-hidden border-b border-gray-200 rounded-lg">
