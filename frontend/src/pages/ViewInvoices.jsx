@@ -483,7 +483,7 @@ const ViewInvoices = () => {
                         <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 text-center" rowSpan={invoice.items.length}>
                           <button
                             onClick={() => downloadInvoicePDF(invoice)}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md text-xs transition duration-150 ease-in-out" {/* Smaller button */}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md text-xs transition duration-150 ease-in-out" 
                           >
                             Download
                           </button>
