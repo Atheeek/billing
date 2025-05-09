@@ -345,6 +345,7 @@ const ViewInvoices = () => {
     doc.setTextColor(0);
     const amountText = `AED ${formatCurrencyForPDF(grandTotalFromInvoice)} / ${amountInWords}`;
     // Split text if too long using doc.splitTextToSize
+    const contentWidth = pageWidth - 2 * margin;
     const splitAmountText = doc.splitTextToSize(amountText, contentWidth - 2); // contentWidth needs to be defined or use pageWidth - margins
     doc.text(splitAmountText, leftMargin + 2, finalTableY + 8);
 
