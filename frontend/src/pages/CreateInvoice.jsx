@@ -19,8 +19,6 @@ const CreateInvoice = () => {
       const rate = parseFloat(newItems[index].rate) || 0;
       newItems[index].amount = (weight * rate).toFixed(2);
     }
-    // Also update amount if ct changes and it's part of your calculation logic (assuming rate might be per ct for some items)
-    // For simplicity, current calculation only uses weight and rate. Adjust if needed.
 
     setItems(newItems);
   };
@@ -76,6 +74,7 @@ const CreateInvoice = () => {
         setCustomer({ name: '', phone: '', address: '' });
         setItems([{ type: '', itemName: '', weight: '', rate: '', clarity: '', ct: '', color: '', amount: 0 }]);
       } else {
+        // Ensure data.message exists, otherwise provide a generic error
         setSuccessMessage(`Error: ${data.message || 'Failed to create invoice.'}`);
       }
     } catch (error) {
@@ -85,10 +84,11 @@ const CreateInvoice = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto"> {/* Adjusted max-width for a slightly wider layout on large screens */}
-        <div className="bg-white shadow-xl rounded-lg p-6 sm:p-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-yellow-800">Create New Invoice</h2>
+    // Added min-h-screen and flex structure to help manage layout if content is shorter than screen
+    <div className="min-h-screen flex flex-col items-center bg-gray-100 py-6 sm:py-12">
+      <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8"> {/* Ensure it takes width */}
+        <div className="bg-white shadow-2xl rounded-2xl p-8">
+          <h2 className="text-4xl font-bold text-center mb-8 text-yellow-800">Create New Invoice</h2>
 
           {successMessage && (
             <div className={`mb-6 p-4 rounded-lg text-center font-semibold ${successMessage.startsWith('Error:') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
@@ -96,113 +96,70 @@ const CreateInvoice = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Customer Information Section */}
-            <fieldset className="border border-gray-300 p-4 rounded-md">
-              <legend className="text-lg font-semibold text-gray-700 px-2">Customer Details</legend>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-                <input name="name" placeholder="Customer Name" value={customer.name} onChange={handleCustomerChange}
-                  className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500" required />
-                <input name="phone" type="tel" placeholder="Phone Number" value={customer.phone} onChange={handleCustomerChange}
-                  className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500" required />
-                <input name="address" placeholder="Address" value={customer.address} onChange={handleCustomerChange}
-                  className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500" />
-              </div>
-            </fieldset>
-
-            {/* Items Section */}
-            <fieldset className="border border-gray-300 p-4 rounded-md">
-              <legend className="text-lg font-semibold text-gray-700 px-2">Items</legend>
-              <div className="space-y-6">
-                {items.map((item, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-md shadow-sm relative">
-                    <button
-                        type="button"
-                        onClick={() => removeItem(index)}
-                        className="absolute top-2 right-2 text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100 transition-colors"
-                        aria-label="Remove item"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-end"> {/* Responsive grid for item fields */}
-                      {/* Row 1 */}
-                      <select value={item.type} onChange={(e) => handleItemChange(index, 'type', e.target.value)}
-                        className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 col-span-1 sm:col-span-2 md:col-span-1" required>
-                        <option value="" disabled>Select Type</option>
-                        <option value="Yellow Gold 18K">Yellow Gold 18K</option>
-                        <option value="White Gold 18K">White Gold 18K</option>
-                        <option value="Rose Gold 18K">Rose Gold 18K</option>
-                        <option value="Platinum">Platinum</option> {/* Corrected duplicate Rose Gold to Platinum */}
-                      </select>
-                      <input placeholder="Item Name" value={item.itemName}
-                        onChange={(e) => handleItemChange(index, 'itemName', e.target.value)}
-                        className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 col-span-1 sm:col-span-2 md:col-span-2" required />
-
-                      {/* Row 2 - Grouping weight, rate, clarity, ct, color */}
-                       <input type="number" step="any" placeholder="Weight (g)" value={item.weight}
-                        onChange={(e) => handleItemChange(index, 'weight', e.target.value)}
-                        className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500" required />
-                      <input type="number" step="any" placeholder="Rate" value={item.rate}
-                        onChange={(e) => handleItemChange(index, 'rate', e.target.value)}
-                        className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500" required />
-                      <input type="text" placeholder="Clarity" value={item.clarity}
-                        onChange={(e) => handleItemChange(index, 'clarity', e.target.value.toUpperCase())}
-                        className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500" />
-                      <input type="number" step="any" placeholder="Carat (ct)" value={item.ct}
-                        onChange={(e) => handleItemChange(index, 'ct', e.target.value)}
-                        className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500" />
-                      <input type="text" placeholder="Color" value={item.color}
-                        onChange={(e) => handleItemChange(index, 'color', e.target.value.toUpperCase())}
-                        className="border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500" />
-
-                      {/* Amount (Read-only) */}
-                      <div className="col-span-1 sm:col-span-2 md:col-span-1"> {/* Allow it to span if needed, or align it */}
-                        <label htmlFor={`amount-${index}`} className="block text-sm font-medium text-gray-700">Amount</label>
-                        <input id={`amount-${index}`} value={`AED ${item.amount}`} readOnly className="border border-gray-300 p-3 rounded-lg bg-gray-100 w-full" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button type="button" onClick={addNewItem}
-                className="mt-6 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                </svg>
-                Add Item
-              </button>
-            </fieldset>
-
-            {/* Totals Section */}
-            <div className="bg-gray-50 p-6 rounded-lg shadow">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Summary</h3>
-                <div className="space-y-2 text-md sm:text-lg">
-                    <div className="flex justify-between">
-                        <span className="text-gray-600">Subtotal:</span>
-                        <span className="font-semibold text-gray-800">AED {subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-gray-600">VAT ({GST_RATE}%):</span>
-                        <span className="font-semibold text-gray-800">AED {gstAmount.toFixed(2)}</span>
-                    </div>
-                    <hr className="my-2 border-gray-300"/>
-                    <div className="flex justify-between text-xl sm:text-2xl">
-                        <span className="font-bold text-yellow-700">Grand Total:</span>
-                        <span className="font-bold text-yellow-700">AED {grandTotal.toFixed(2)}</span>
-                    </div>
-                </div>
+          <form onSubmit={handleSubmit} className="space-y-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <input name="name" placeholder="Customer Name" value={customer.name} onChange={handleCustomerChange}
+                className="border border-gray-300 p-3 rounded-lg" required />
+              <input name="phone" placeholder="Phone Number" value={customer.phone} onChange={handleCustomerChange}
+                className="border border-gray-300 p-3 rounded-lg" required />
+              <input name="address" placeholder="Address" value={customer.address} onChange={handleCustomerChange}
+                className="border border-gray-300 p-3 rounded-lg" />
             </div>
 
+            <hr className="border-t-2 border-gray-200" />
 
-            {/* Actions */}
-            <div className="mt-8 pt-5 border-t border-gray-200">
-              <div className="flex justify-end"> {/* Changed from text-center to flex justify-end for a common pattern */}
-                <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-bold transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
-                  Create Invoice
-                </button>
-              </div>
+            {/* Container for items with max-height and overflow */}
+            <div className="space-y-4 max-h-96 overflow-y-auto pr-2"> {/* pr-2 for scrollbar space */}
+              {items.map((item, index) => (
+                <div key={index} className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center"> {/* Original item grid */}
+                  <select value={item.type} onChange={(e) => handleItemChange(index, 'type', e.target.value)}
+                    className="border p-3 rounded-lg md:col-span-1" required> {/* Adjusted col-span for consistency */}
+                    <option value="" disabled>Select Type</option>
+                    <option value="Yellow Gold 18K">Yellow Gold 18K</option>
+                    <option value="White Gold 18K">White Gold 18K</option>
+                    <option value="Rose Gold 18K">Rose Gold 18K</option>
+                    <option value="Platinum">Platinum</option> {/* Corrected typo */}
+                  </select>
+                  <input placeholder="Item Name" value={item.itemName}
+                    onChange={(e) => handleItemChange(index, 'itemName', e.target.value)}
+                    className="border p-3 rounded-lg md:col-span-2" required /> {/* Adjusted col-span */}
+                  <input type="number" step="0.01" placeholder="Weight (g)" value={item.weight}
+                    onChange={(e) => handleItemChange(index, 'weight', e.target.value)}
+                    className="border p-3 rounded-lg" required />
+                  <input type="text" placeholder="Clarity" value={item.clarity}
+                    onChange={(e) => handleItemChange(index, 'clarity', e.target.value.toUpperCase())}
+                    className="border p-3 rounded-lg" /> {/* Removed required as per original for some fields */}
+                  <input type="number" step="0.01" placeholder="Carrot (CT)" value={item.ct}
+                    onChange={(e) => handleItemChange(index, 'ct', e.target.value)}
+                    className="border p-3 rounded-lg" />
+                  <input type="text" placeholder="Color" value={item.color}
+                    onChange={(e) => handleItemChange(index, 'color', e.target.value.toUpperCase())}
+                    className="border p-3 rounded-lg" />
+                  <input type="number" step="0.01" placeholder="Rate" value={item.rate}
+                    onChange={(e) => handleItemChange(index, 'rate', e.target.value)}
+                    className="border p-3 rounded-lg" required />
+                  {/* Amount and Remove button will wrap naturally based on the 7-column grid in the original design */}
+                  <input value={item.amount} readOnly className="border p-3 rounded-lg bg-gray-100 md:col-start-1" /> {/* Suggest starting col for amount on new line on md */}
+                  <button type="button" onClick={() => removeItem(index)} className="text-red-600 hover:text-red-800 md:col-start-2">Remove</button> {/* Suggest starting col for remove */}
+                </div>
+              ))}
+            </div>
+
+            <button type="button" onClick={addNewItem}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold">
+              + Add Item
+            </button>
+
+            <div className="text-right space-y-2 text-lg mt-6">
+              <div>Subtotal: AED {subtotal.toFixed(2)}</div>
+              <div>VAT ({GST_RATE}%): AED {gstAmount.toFixed(2)}</div>
+              <div className="font-bold text-2xl text-yellow-700">Grand Total: AED {grandTotal.toFixed(2)}</div>
+            </div>
+
+            <div className="text-center">
+              <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-lg text-lg font-bold">
+                Create Invoice
+              </button>
             </div>
           </form>
         </div>
