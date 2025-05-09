@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable'; // Ensure this is imported if you use it
+import autoTable from 'jspdf-autotable'; // Ensure this is imported
 
 const ViewInvoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -10,25 +10,23 @@ const ViewInvoices = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        // Use the VITE_API_URL environment variable
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/invoices`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+         if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+         }
         const data = await response.json();
-        // Sort by createdAt descending
         const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setInvoices(sortedData);
       } catch (error) {
         console.error('Error fetching invoices:', error);
-        // Optionally set an error state to display a message to the user
+         // Optionally set an error state to display a message to the user
       } finally {
         setLoading(false);
       }
     };
 
     fetchInvoices();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   // Helper function for formatting AED currency for display in the table
   const formatAED = (amount) => {
@@ -40,8 +38,8 @@ const ViewInvoices = () => {
     return `AED ${number.toLocaleString('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
-   // Helper function (for PDF generation - KEPT AS IS)
-   function getAmountInWords(num) {
+  // Helper function (for PDF generation - RESTORED TO ORIGINAL FROM FIRST TURN)
+  function getAmountInWords(num) {
     // 1. Input Validation
     if (typeof num !== "number" || isNaN(num)) {
       return "Invalid Amount";
@@ -106,7 +104,7 @@ const ViewInvoices = () => {
     }
 
 
-    // 5. Convert Integer Part (Dirhams) to Words using Indian Numbering System (Assuming Indian standard for Crore/Lakh based on implementation)
+    // 5. Convert Integer Part (Dirhams) to Words using Indian Numbering System
     let dirhamWordsArray = [];
     let remainingAmount = adjustedIntegerPart;
 
@@ -137,8 +135,7 @@ const ViewInvoices = () => {
 
     // Join Dirham words and add the currency name if applicable
     let dirhamWordsString = dirhamWordsArray.join(' ');
-    // Ensure "Dirhams" is added only if there are Dirhams
-    if (adjustedIntegerPart > 0 || (adjustedIntegerPart === 0 && adjustedFilsPart > 0)) { // Add Dirhams even if only Fils are present, but not for zero
+    if (adjustedIntegerPart > 0) {
         dirhamWordsString += (dirhamWordsString ? ' ' : '') + 'Dirhams'; // Add space if words exist
     }
 
@@ -151,32 +148,28 @@ const ViewInvoices = () => {
 
     // 7. Combine Dirhams and Fils parts
     let finalWords = '';
-    if (dirhamWordsString && adjustedIntegerPart > 0) { // Add Dirhams words only if integer part is > 0
+    if (dirhamWordsString) {
         finalWords += dirhamWordsString;
-    } else if (adjustedIntegerPart === 0 && adjustedFilsPart === 0) {
-         return "Zero Dirhams Only"; // Explicitly handle zero case again after potential carry-over
     }
 
-
     if (filsWordsString) {
-        if (finalWords) { // Add 'and' only if Dirhams words exist
+        if (finalWords) { // Add 'and' only if Dirhams exist
             finalWords += ' and ';
         }
         finalWords += filsWordsString;
     }
 
-    // If after all calculations, the result is empty (e.g., input was 0 but missed initial check), return zero
-    if (!finalWords) { // This might happen if adjustedIntegerPart was 0 initially and filsPart was 0 after rounding
-        return "Zero Dirhams Only";
-    }
-
+      // If after all calculations, the result is empty (e.g., input was 0 but missed initial check), return zero
+      if (!finalWords && adjustedIntegerPart === 0 && adjustedFilsPart === 0) {
+          return "Zero Dirhams Only";
+      }
 
     // Add "Only" suffix
     return finalWords.trim() + ' Only';
   }
 
 
-  // PDF Download Function (KEPT AS IS, MINOR REFACTORING FOR CLARITY/CONSISTENCY IF NEEDED BUT LOGIC PRESERVED)
+  // PDF Download Function (RESTORED TO ORIGINAL FROM FIRST TURN - DO NOT MODIFY)
   const downloadInvoicePDF = async (invoice) => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -186,7 +179,6 @@ const ViewInvoices = () => {
     const contentWidth = pageWidth - leftMargin - rightMargin;
     const rightAlignX = pageWidth - rightMargin;
 
-    // Helper to load images
     const loadImage = (src) => {
       return new Promise((resolve) => {
         const img = new Image();
@@ -194,7 +186,7 @@ const ViewInvoices = () => {
         img.onload = () => resolve(img);
         img.onerror = (err) => {
           console.error("Failed to load image:", src, err);
-          resolve(null); // Resolve with null on error so PDF generation doesn't stop
+          resolve(null);
         };
       });
     };
@@ -202,83 +194,70 @@ const ViewInvoices = () => {
     let logo = null;
     let watermark = null;
     try {
-      // Assuming these paths are correct relative to your public folder
       logo = await loadImage('/logo.png');
       watermark = await loadImage('/watermark1.png');
     } catch (error) {
-      console.error("Error loading images for PDF:", error);
+      console.error("Error loading images:", error);
     }
 
-    // Header Section
-    let currentY = 12;
     if (logo) {
-      doc.addImage(logo, 'PNG', leftMargin, currentY, 30, 30);
+      doc.addImage(logo, 'PNG', leftMargin, 12, 30, 30);
     }
 
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(120, 153, 0); // Adjusted color based on common branding styles
+    doc.setTextColor(120, 153, 0);
     doc.setFontSize(12);
-    doc.text('SKY DIAMOND DREAMS TRADING L.L.C', 55, currentY + 3); // Adjust Y position relative to logo top
+    doc.text('SKY DIAMOND DREAMS TRADING L.L.C', 55, 15);
 
     doc.setFontSize(10);
-    doc.setTextColor(0); // Black text
+    doc.setTextColor(0);
     doc.setFont('helvetica', 'normal');
-    doc.text('Tel: +971 50 457 6948', 55, currentY + 8);
-    doc.text('Email: info@skydiamonddreams.com', 55, currentY + 13);
-    doc.text('B-3 Office No. 201, Al Muteena', 55, currentY + 18);
-    doc.text('Al Muteena – B3, Dubai U.A.E', 55, currentY + 23);
+    doc.text('Tel: +971 50 457 6948', 55, 20);
+    doc.text('Email: info@skydiamonddreams.com', 55, 25);
+    doc.text('B-3 Office No. 201, Al Muteena', 55, 30);
+    doc.text('Al Muteena – B3, Dubai U.A.E', 55, 35);
 
-    // Horizontal line below header
-    doc.setDrawColor(169, 140, 61); // Adjusted color
+    doc.setDrawColor(169, 140, 61);
     doc.setLineWidth(0.5);
-    doc.line(leftMargin, currentY + 28, rightAlignX, currentY + 28);
+    doc.line(leftMargin, 40, rightAlignX, 40);
 
-    currentY = currentY + 35; // Move Y below the line
-
-    // TRN and Invoice Details
     doc.setTextColor(0);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.text(`TRN: 104783462500003`, leftMargin, currentY);
+    doc.text(`TRN: 104783462500003`, leftMargin, 48);
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
-    doc.text('INVOICE', pageWidth / 2, currentY, { align: 'center' });
+    doc.text('INVOICE', pageWidth / 2, 48, { align: 'center' });
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.text(`No: ${invoice?.invoiceNumber || 'N/A'}`, rightAlignX, currentY, { align: 'right' });
+    doc.text(`No: ${invoice?.invoiceNumber || 'N/A'}`, rightAlignX, 48, { align: 'right' });
 
     const formattedDate = invoice?.date
       ? new Date(invoice.date).toLocaleDateString('en-GB').replace(/\//g, '.')
       : 'N/A';
-    doc.text(`Date: ${formattedDate}`, rightAlignX, currentY + 7, { align: 'right' });
+    doc.text(`Date: ${formattedDate}`, rightAlignX, 55, { align: 'right' });
 
-    currentY += 15; // Move Y below invoice details
-
-    // Bill To Section
+    const billToY = 62;
     doc.setFont('helvetica', 'bold');
-    doc.text(`Bill to:`, leftMargin, currentY);
+    doc.text(`Bill to:`, leftMargin, billToY);
     doc.setFont('helvetica', 'normal');
-    doc.text(`${invoice?.customer?.name ?? 'N/A'}`, leftMargin + 16, currentY);
+    doc.text(`${invoice?.customer?.name ?? 'N/A'}`, leftMargin + 16, billToY);
 
     doc.setFont('helvetica', 'bold');
-    doc.text(`Mobile No:`, leftMargin, currentY + 6);
+    doc.text(`Mobile No:`, leftMargin, billToY + 6);
     doc.setFont('helvetica', 'normal');
-    doc.text(`${invoice?.customer?.phone ?? 'N/A'}`, leftMargin + 22, currentY + 6);
+    doc.text(`${invoice?.customer?.phone ?? 'N/A'}`, leftMargin + 22, billToY + 6);
 
-    currentY += 15; // Move Y below Bill To
-
-    // Watermark (positioned mid-page)
     if (watermark) {
       const watermarkWidth = 120;
-      const watermarkHeight = 120; // Assuming aspect ratio is roughly 1:1
+      const watermarkHeight = 120;
       const watermarkX = (pageWidth - watermarkWidth) / 2;
-      const watermarkY = (pageHeight - watermarkHeight) / 2 + 10; // Adjusted slightly up
+      const watermarkY = (pageHeight - watermarkHeight) / 2 + 10;
       doc.addImage(watermark, 'PNG', watermarkX, watermarkY, watermarkWidth, watermarkHeight, '', 'FAST');
     }
 
-    // Currency format helper for PDF (local to this function)
     const formatCurrency = (num) => {
       const number = parseFloat(num);
       return typeof number === 'number' && !isNaN(number)
@@ -286,194 +265,107 @@ const ViewInvoices = () => {
         : '0.00';
     };
 
-    // Table Section
-    const tableStartY = currentY; // Start table below previous content
+    const tableStartY = 75;
     const approxRowHeight = 8;
-    const maxTableRows = Math.floor((pageHeight - 50 - tableStartY) / approxRowHeight); // Leave space at bottom
+    const maxTableRows = Math.floor((pageHeight * 0.75 - tableStartY) / approxRowHeight);
 
     const tableBody = invoice.items.map((item, index) => {
-       // Use item properties directly for description
+      // Original Qty calculation based on index + 1
+      const qty = String(index + 1).padStart(2, '0');
+      // Original rate and amount usage
+       const unitPrice = item.rate?.toFixed(2) || '0.00';
+       const vat = (item.amount * 0.05).toFixed(2); // Original VAT calculation based on item.amount
+       const total = (item.amount + parseFloat(vat)).toFixed(2); // Original Total calculation
+
       const desc = [
-        item.type && `${item.type}`, // Start with item type
-        item.itemName && `${item.itemName}`, // Add item name
-        item.ct && `CT: ${item.ct}`,
+        item.itemName && `Diamond ${item.itemName}`,
+        item.ct && `Diamond: ${item.ct} CT`,
         item.clarity && `Clarity: ${item.clarity}`,
         item.color && `Color: ${item.color}`,
         item.material && `Material: ${item.material}`,
-        // Assuming weight is always present for certain types, otherwise make conditional
-        // if (item.type !== 'Diamond') item.weight && `Weight: ${item.weight} GM`,
-        item.weight && `Weight: ${item.weight} GM`, // Assuming weight is relevant for all item types displayed this way
-      ].filter(Boolean).join(', '); // Join with comma and space
-
-       // Calculate item total *before* adding to body for VAT calculation in table structure
-       // Assume item.amount is the amount *before* VAT based on table body mapping below
-       const itemAmountBeforeVAT = parseFloat(item.amount || 0);
-       const vatAmountPerItem = (itemAmountBeforeVAT * 0.05);
-       const totalPerItemIncludingVAT = itemAmountBeforeVAT + vatAmountPerItem;
+        item.type && `${item.type} - ${item.weight} GM`,
+      ].filter(Boolean).join('\n\n');
 
 
-       return [
-        (index + 1).toString(), // Sl.No
-        desc || 'No Description', // Description
-        '1', // Assuming Qty is always 1 per line item entry as per description style
-        formatCurrency(item.rate || 0), // Unit Price (Assuming item.rate is pre-VAT unit price)
-        formatCurrency(vatAmountPerItem), // VAT 5% (Calculated based on item.amount)
-        formatCurrency(totalPerItemIncludingVAT) // Total (Amount + VAT per item)
+      return [
+        (index + 1).toString(),
+        desc || 'No Description',
+        qty,
+        unitPrice,
+        vat,
+        total
       ];
     });
 
-     // Calculate totals for display in the summary row
-    const subtotal = invoice?.subtotal || 0; // Assuming subtotal is provided in invoice object
-    const vatAmount = invoice?.gstAmount || 0; // Assuming gstAmount is provided in invoice object
-    const grandTotal = invoice?.grandTotal || 0; // Assuming grandTotal is provided in invoice object
+    const grandTotal = parseFloat(invoice?.grandTotal || 0);
+    const blankRowsNeeded = Math.max(0, maxTableRows - tableBody.length - 1);
+    for (let i = 0; i < blankRowsNeeded; i++) tableBody.push(['', '', '', '', '', '']);
 
-    // Add blank rows if needed to ensure consistent table height (optional, can be removed)
-    // This part can sometimes push content to the next page unnecessarily if maxTableRows is miscalculated.
-    // Let's simplify and remove blank rows for now for more reliable layout.
-    // If consistent height is strictly needed, recalculate maxTableRows based on available space.
-    // const blankRowsNeeded = Math.max(0, maxTableRows - tableBody.length - 1); // -1 for the totals row
-    // for (let i = 0; i < blankRowsNeeded; i++) tableBody.push(['', '', '', '', '', '']);
-
-
-    // Add Totals Row(s) - Adjusted to match structure
-    // The original code placed Grand Total *under* VAT, let's replicate that arrangement
-    const totalsRow = [
-         { content: 'Subtotal', styles: { halign: 'right', fontStyle: 'bold', fontSize: 9 } },
-         { content: formatCurrency(subtotal), styles: { halign: 'right', fontStyle: 'bold', fontSize: 9 } }
-    ];
-    const vatRow = [
-        { content: 'VAT 5%', styles: { halign: 'right', fontStyle: 'bold', fontSize: 9 } },
-        { content: formatCurrency(vatAmount), styles: { halign: 'right', fontStyle: 'bold', fontSize: 9 } }
-    ];
-     const grandTotalRow = [
-        { content: 'Grand Total', styles: { halign: 'right', fontStyle: 'bold', fontSize: 9 } },
-        { content: formatCurrency(grandTotal), styles: { halign: 'right', fontStyle: 'bold', fontSize: 9 } }
-    ];
-
-
-    // Add empty cells to align totals columns to the rightmost side
-    // Assuming 6 columns in total: Sl.No, Description, Qty, Unit Price, VAT 5%, Total
-    // Subtotal, VAT, Grand Total should appear under the rightmost columns.
-    // They take 2 columns total (Label + Value)
-    const emptyCellsForTotals = Array(6 - 2).fill(''); // 4 empty cells
-    const finalBody = [
-        ...tableBody,
-        [...emptyCellsForTotals, ...totalsRow],
-        [...emptyCellsForTotals, ...vatRow],
-        [...emptyCellsForTotals, ...grandTotalRow]
-    ];
-
+    // Original totals row structure in autoTable body
+    tableBody.push([
+      { content: '', colSpan: 4 },
+      { content: 'Grand Total', styles: { halign: 'right', fontStyle: 'bold', fontSize: 9 } },
+      { content: formatCurrency(grandTotal), styles: { halign: 'right', fontStyle: 'bold', fontSize: 9 } }
+    ]);
 
     autoTable(doc, {
       startY: tableStartY,
       head: [['Sl.No', 'Description', 'Qty', 'Unit Price', 'VAT 5%', 'Total']],
-      body: finalBody, // Use the modified body with totals
+      body: tableBody,
       theme: 'plain',
       styles: { fontSize: 9, cellPadding: 2, valign: 'top' },
-      headStyles: {
-          fillColor: [240, 240, 240],
-          fontStyle: 'bold',
-          halign: 'center',
-          valign: 'middle',
-          textColor: [0,0,0] // Ensure header text is black
-        },
+      headStyles: { fillColor: [240, 240, 240], fontStyle: 'bold', halign: 'center', valign: 'middle' },
       columnStyles: {
-        0: { halign: 'center', cellWidth: 12 }, // Sl.No
-        1: { cellWidth: 60 }, // Description - increased width slightly
-        2: { halign: 'center', cellWidth: 14 }, // Qty
-        3: { halign: 'right', cellWidth: 22 }, // Unit Price
-        4: { halign: 'right', cellWidth: 22 }, // VAT 5%
-        5: { halign: 'right', cellWidth: 25 }, // Total
-         // Styles for the totals rows - applied based on column index relative to the row
-         // Need to ensure these apply only to the last 3 rows
-      },
-      didParseCell: (data) => {
-          // Apply specific styles to the totals rows
-          const totalRows = finalBody.length;
-          const currentRow = data.row.index;
-          if (currentRow >= totalRows - 3) { // Last 3 rows are totals
-               if (data.column.index === 6 - 2) { // The label column (e.g., 'Grand Total')
-                  data.cell.styles.halign = 'right';
-                  data.cell.styles.fontStyle = 'bold';
-                  data.cell.styles.fontSize = 9;
-               } else if (data.column.index === 6 - 1) { // The value column (e.g., 'AED 3,400.00')
-                   data.cell.styles.halign = 'right';
-                   data.cell.styles.fontStyle = 'bold'; // Make value bold too
-                   data.cell.styles.fontSize = 9;
-                   // Apply green color to Grand Total value only
-                   if (currentRow === totalRows - 1) { // Last row is Grand Total
-                       data.cell.styles.textColor = [27, 107, 45]; // Darker green
-                   }
-               }
-          }
-      },
-      didDrawCell: (data) => {
-          // Custom borders
-          doc.setLineWidth(0.1);
-          doc.setDrawColor(180, 180, 180); // Light grey border color
-
-          const totalRows = finalBody.length;
-          const currentRow = data.row.index;
-          const isTotalsRow = currentRow >= totalRows - 3;
-          const isGrandTotalRow = currentRow === totalRows - 1;
-          const isLastTotalRow = currentRow === totalRows -1;
-
-
-          if (data.section === 'head') {
-               // Top border for the head
-               if (data.row.index === 0) doc.line(data.cell.x, data.cell.y, data.cell.x + data.cell.width, data.cell.y);
-               // Bottom border for the head
-               doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
-          } else if (data.section === 'body') {
-              // Vertical borders between columns for body
-              doc.line(data.cell.x, data.cell.y, data.cell.x, data.cell.y + data.cell.height);
-              if (data.column.index === data.table.columns.length - 1) {
-                 doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
-              }
-
-              // Bottom border for each body row EXCEPT the totals rows
-              if (!isTotalsRow) {
-                   doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
-              } else {
-                 // Draw specific borders for totals rows
-                 if (data.column.index >= 6 - 2) { // Only draw borders for the totals columns themselves
-                     doc.line(data.cell.x, data.cell.y, data.cell.x, data.cell.y + data.cell.height); // Left border for totals cells
-                     doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height); // Right border for totals cells
-                     // Draw bottom border for all totals rows (Subtotal, VAT, Grand Total)
-                     doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
-                 }
-                  if (currentRow === totalRows - 3 && data.column.index >= 6 - 2) { // Top border for the first totals row (Subtotal)
-                      doc.line(data.cell.x, data.cell.y, data.cell.x + data.cell.width, data.cell.y);
-                  }
-
-              }
-          }
+        0: { halign: 'center', cellWidth: 12 },
+        1: { cellWidth: 'auto' }, // Original 'auto' width
+        2: { halign: 'center', cellWidth: 14 },
+        3: { halign: 'right', cellWidth: 22 },
+        4: { halign: 'right', cellWidth: 22 },
+        5: { halign: 'right', cellWidth: 25 },
       },
       margin: { left: leftMargin, right: rightMargin },
+       // Original didDrawCell logic
+      didDrawCell: (data) => {
+        doc.setLineWidth(0.1);
+        doc.setDrawColor(180, 180, 180);
+        if (data.column.index < data.table.columns.length - 1) {
+          doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+        }
+        if (data.section === 'head') {
+          doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+        }
+         // This condition targets the row *before* the last one (assuming the last one is Grand Total)
+        if (data.section === 'body' && data.row.index === data.table.body.length - 2) {
+          doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+        }
+        if (data.column.index === 0) doc.line(data.cell.x, data.cell.y, data.cell.x, data.cell.y + data.cell.height);
+        if (data.column.index === data.table.columns.length - 1)
+          doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+        if (data.section === 'head' && data.row.index === 0)
+          doc.line(data.cell.x, data.cell.y, data.cell.x + data.cell.width, data.cell.y);
+        if (data.section === 'body' && data.row.index === data.table.body.length - 1)
+          doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+      }
     });
 
     const finalTableY = doc.lastAutoTable.finalY;
     const amountInWords = getAmountInWords(grandTotal);
 
-    // Amount in Words Section
+    // Original Amount in Words display
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(0);
-    // Ensure the Y position is just below the table, and use a small margin
-    doc.text(`Amount in words: ${amountInWords}`, leftMargin, finalTableY + 8);
+     // Original Y position calculation
+    doc.text(`AED ${grandTotal.toLocaleString('en-AE')} / ${amountInWords}`, leftMargin + 2, finalTableY + 8);
 
-    // Footer Section (Signature Line)
-    const bottomLineY = pageHeight - 20; // Position from bottom
-    doc.setDrawColor(169, 140, 61); // Adjusted color
+    const bottomLineY = pageHeight - 20;
+    doc.setDrawColor(169, 140, 61);
     doc.setLineWidth(0.5);
     doc.line(leftMargin, bottomLineY, rightAlignX, bottomLineY);
-
     doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150); // Grey text
+    doc.setTextColor(150);
     doc.text('Authorised Signature / Stamp', rightAlignX, bottomLineY + 5, { align: 'right' });
 
-
-    // Save the PDF
     try {
       const safeInvoiceNumber = String(invoice?.invoiceNumber || 'NoNumber').replace(/[^a-z0-9_.-]/gi, '_');
       doc.save(`Invoice_${safeInvoiceNumber}.pdf`);
@@ -486,7 +378,7 @@ const ViewInvoices = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen"> {/* Center in viewport */}
+      <div className="flex justify-center items-center min-h-screen"> {/* Use min-h-screen */}
         <div className="text-center text-xl font-semibold text-indigo-700">
            Loading invoices...
         </div>
@@ -495,115 +387,103 @@ const ViewInvoices = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10"> {/* Improved padding */}
-      <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-gray-800"> {/* Larger, bolder title */}
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-gray-800">
         All Invoices
-      </h2>
+      </h2> */}
 
       {invoices.length > 0 ? (
-        <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200"> {/* Added shadow and border */}
-          <table className="min-w-full bg-white border-collapse"> {/* Use border-collapse */}
-            <thead className="bg-gray-100"> {/* Lighter header background */}
+        <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200"> {/* overflow-x-auto kept as fallback */}
+          <table className="min-w-full bg-white border-collapse table-auto"> {/* table-auto lets columns size based on content */}
+            <thead className="bg-gray-100">
               <tr>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Invoice No</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Date</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Customer Name</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Phone</th>
-                 {/* Changed 'Qty' to 'Sl.No' to match PDF and likely intent */}
-                <th className="py-3 px-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Sl.No</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Item Type</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Item Name</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Clarity</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">CT</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Color</th>
-                <th className="py-3 px-4 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Weight (g)</th> {/* Right align weight */}
-                <th className="py-3 px-4 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Rate</th> {/* Right align currency */}
-                <th className="py-3 px-4 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Amount</th> {/* Right align currency */}
-                <th className="py-3 px-4 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Subtotal</th> {/* Right align currency */}
-                <th className="py-3 px-4 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">VAT (5%)</th> {/* Right align currency */}
-                <th className="py-3 px-4 text-right text-xs font-medium text-green-700 uppercase tracking-wider border-b border-gray-200 font-bold">Grand Total</th> {/* Right align currency, bolder */}
-                <th className="py-3 px-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200">Actions</th>
+                <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-16 min-w-[4rem]">Inv No</th> {/* Abbreviated header, min-width */}
+                <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-20 min-w-[5rem]">Date</th> {/* Min-width */}
+                <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-32 min-w-[8rem]">Customer</th> {/* Abbreviated, min-width */}
+                <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-24 min-w-[6rem]">Phone</th> {/* Min-width */}
+                <th className="py-3 px-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-12 min-w-[3rem]">Sl.No</th> {/* Narrow min-width */}
+                <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-24 min-w-[6rem]">Item Type</th> {/* Min-width */}
+                <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-32 min-w-[8rem]">Item Name</th> {/* Min-width */}
+                <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-20 min-w-[5rem]">Clarity</th> {/* Min-width */}
+                <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-16 min-w-[4rem]">CT</th> {/* Narrower min-width */}
+                <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-16 min-w-[4rem]">Color</th> {/* Narrower min-width */}
+                <th className="py-3 px-2 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-20 min-w-[5rem]">Weight (g)</th> {/* Right align, min-width */}
+                <th className="py-3 px-2 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-24 min-w-[6rem]">Rate</th> {/* Right align, min-width */}
+                <th className="py-3 px-2 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-24 min-w-[6rem]">Amount</th> {/* Right align, min-width */}
+                <th className="py-3 px-2 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-24 min-w-[6rem]">Subtotal</th> {/* Right align, min-width */}
+                <th className="py-3 px-2 text-right text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-20 min-w-[5rem]">VAT (5%)</th> {/* Right align, min-width */}
+                <th className="py-3 px-2 text-right text-xs font-medium text-green-700 uppercase tracking-wider border-b border-gray-200 font-bold w-24 min-w-[6rem]">Grand Total</th> {/* Right align, min-width */}
+                <th className="py-3 px-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-24 min-w-[6rem]">Actions</th> {/* Min-width */}
               </tr>
             </thead>
             <tbody>
               {invoices.flatMap((invoice) =>
                 invoice.items.map((item, index) => (
                   <tr
-                    key={`${invoice._id}-${item._id}`} // Use actual unique IDs if available, otherwise composite
-                    className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`} // Alternating row colors
+                    key={`${invoice._id}-${item._id || index}`} // Use unique ID if available, fallback to index
+                    className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                   >
                     {/* Invoice level details (show only on the first item row) */}
                     {index === 0 ? (
                       <>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200" rowSpan={invoice.items.length}>
-                          {invoice.invoiceNumber}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200" rowSpan={invoice.items.length}>
-                          {new Date(invoice.date).toLocaleDateString('en-IN')}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200" rowSpan={invoice.items.length}>
-                          {invoice.customer.name}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200" rowSpan={invoice.items.length}>
-                          {invoice.customer.phone}
-                        </td>
+                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200" rowSpan={invoice.items.length}>{invoice.invoiceNumber}</td>
+                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200" rowSpan={invoice.items.length}>{new Date(invoice.date).toLocaleDateString('en-IN')}</td>
+                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200" rowSpan={invoice.items.length}>{invoice.customer.name}</td>
+                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200" rowSpan={invoice.items.length}>{invoice.customer.phone}</td>
                       </>
                     ) : (
                         // Render empty cells for subsequent rows within the same invoice
                         <>
-                            <td className="px-4 py-3 border-r border-gray-200"></td> {/* Placeholder for Invoice No */}
-                            <td className="px-4 py-3 border-r border-gray-200"></td> {/* Placeholder for Date */}
-                            <td className="px-4 py-3 border-r border-gray-200"></td> {/* Placeholder for Customer Name */}
-                            <td className="px-4 py-3 border-r border-gray-200"></td> {/* Placeholder for Phone */}
+                            <td className="px-2 py-2 border-r border-gray-200"></td> {/* Placeholder */}
+                            <td className="px-2 py-2 border-r border-gray-200"></td> {/* Placeholder */}
+                            <td className="px-2 py-2 border-r border-gray-200"></td> {/* Placeholder */}
+                            <td className="px-2 py-2 border-r border-gray-200"></td> {/* Placeholder */}
                         </>
                     )}
 
-
                     {/* Item level details */}
-                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-center">
-                        {index + 1} {/* Serial number */}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
+                     <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-center">{index + 1}</td> {/* Serial number */}
+                    <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
                       {item.type}
                     </td>
-                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
-                      {item.itemName || '-'} {/* Display Item Name, show '-' if null */}
+                     <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
+                      {item.itemName || '-'}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
-                      {item.clarity || '-'} {/* Display Clarity, show '-' if null */}
+                    <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
+                      {item.clarity || '-'}
                     </td>
-                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
-                      {item.ct || '-'} {/* Display CT, show '-' if null */}
+                     <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
+                      {item.ct || '-'}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
-                      {item.color || '-'} {/* Display Color, show '-' if null */}
+                    <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
+                      {item.color || '-'}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right">
-                      {item.weight ? item.weight.toFixed(2) : '0.00'} {/* Display Weight, formatted */}
+                    <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right">
+                      {item.weight ? item.weight.toFixed(2) : '0.00'}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right">
+                    <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right">
                       {formatAED(item.rate)} {/* Formatted & Right-aligned */}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right">
+                    <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right">
                       {formatAED(item.amount)} {/* Formatted & Right-aligned */}
                     </td>
 
                     {/* Total level details (show only on the first item row) */}
                     {index === 0 ? (
                       <>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right font-semibold" rowSpan={invoice.items.length}>
+                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right font-semibold" rowSpan={invoice.items.length}>
                           {formatAED(invoice.subtotal)} {/* Formatted & Right-aligned */}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right font-semibold" rowSpan={invoice.items.length}>
+                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-right font-semibold" rowSpan={invoice.items.length}>
                           {formatAED(invoice.gstAmount)} {/* Formatted & Right-aligned */}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-green-700 border-r border-gray-200 text-right font-bold" rowSpan={invoice.items.length}>
+                        <td className="px-2 py-2 whitespace-nowrap text-sm text-green-700 border-r border-gray-200 text-right font-bold" rowSpan={invoice.items.length}>
                           {formatAED(invoice.grandTotal)} {/* Formatted & Right-aligned, green, bold */}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 text-center" rowSpan={invoice.items.length}>
+                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 text-center" rowSpan={invoice.items.length}>
                           <button
                             onClick={() => downloadInvoicePDF(invoice)}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md text-sm transition duration-150 ease-in-out" // Added hover and transition
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md text-xs transition duration-150 ease-in-out" {/* Smaller button */}
                           >
                             Download
                           </button>
@@ -612,10 +492,10 @@ const ViewInvoices = () => {
                     ) : (
                          // Render empty cells for subsequent rows within the same invoice
                         <>
-                             <td className="px-4 py-3 border-r border-gray-200"></td> {/* Placeholder for Subtotal */}
-                             <td className="px-4 py-3 border-r border-gray-200"></td> {/* Placeholder for VAT */}
-                             <td className="px-4 py-3 border-r border-gray-200"></td> {/* Placeholder for Grand Total */}
-                             <td className="px-4 py-3"></td> {/* Placeholder for Actions */}
+                             <td className="px-2 py-2 border-r border-gray-200"></td> {/* Placeholder */}
+                             <td className="px-2 py-2 border-r border-gray-200"></td> {/* Placeholder */}
+                             <td className="px-2 py-2 border-r border-gray-200"></td> {/* Placeholder */}
+                             <td className="px-2 py-2"></td> {/* Placeholder */}
                         </>
                     )}
                   </tr>
