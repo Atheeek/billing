@@ -74,98 +74,91 @@ const CreateInvoice = () => {
         setCustomer({ name: '', phone: '', address: '' });
         setItems([{ type: '', itemName: '', weight: '', rate: '', clarity: '', ct: '', color: '', amount: 0 }]);
       } else {
-        // Ensure data.message exists, otherwise provide a generic error
-        setSuccessMessage(`Error: ${data.message || 'Failed to create invoice.'}`);
+        setSuccessMessage(`Error: ${data.message}`);
       }
     } catch (error) {
       console.error('Error:', error);
-      setSuccessMessage('Error creating invoice. Please check the console.');
+      setSuccessMessage('Error creating invoice.');
     }
   };
 
   return (
-    // Added min-h-screen and flex structure to help manage layout if content is shorter than screen
-    <div className="min-h-screen flex flex-col items-center bg-gray-100 py-6 sm:py-12">
-      <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8"> {/* Ensure it takes width */}
-        <div className="bg-white shadow-2xl rounded-2xl p-8">
-          <h2 className="text-4xl font-bold text-center mb-8 text-yellow-800">Create New Invoice</h2>
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="bg-white shadow-2xl rounded-2xl p-8">
+        <h2 className="text-4xl font-bold text-center mb-8 text-yellow-800">Create New Invoice</h2>
 
-          {successMessage && (
-            <div className={`mb-6 p-4 rounded-lg text-center font-semibold ${successMessage.startsWith('Error:') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-              {successMessage}
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-lg text-center font-semibold">
+            {successMessage}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <input name="name" placeholder="Customer Name" value={customer.name} onChange={handleCustomerChange}
+              className="border border-gray-300 p-3 rounded-lg" required />
+            <input name="phone" placeholder="Phone Number" value={customer.phone} onChange={handleCustomerChange}
+              className="border border-gray-300 p-3 rounded-lg" required />
+            <input name="address" placeholder="Address" value={customer.address} onChange={handleCustomerChange}
+              className="border border-gray-300 p-3 rounded-lg" />
+          </div>
+
+          <hr className="border-t-2 border-gray-200" />
+
+          {items.map((item, index) => (
+            <div key={index} className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center">
+              <select value={item.type} onChange={(e) => handleItemChange(index, 'type', e.target.value)}
+                className="border p-3 rounded-lg" required>
+                <option value="" disabled>Select Type</option>
+                <option value="Yellow Gold 18K">Yellow Gold 18K</option>
+                <option value="White Gold 18K">White Gold 18K</option>
+                <option value="Rose Gold 18K">Rose Gold 18K</option>
+                <option value="Rose Gold 18K">Platinum</option>
+              </select>
+              <input placeholder="Item Name" value={item.itemName}
+                onChange={(e) => handleItemChange(index, 'itemName', e.target.value)}
+                className="border p-3 rounded-lg" required />
+              <input type="number" step="0.01" placeholder="Weight (g)" value={item.weight}
+                onChange={(e) => handleItemChange(index, 'weight', e.target.value)}
+                className="border p-3 rounded-lg" required />
+              <input type="text" placeholder="Clarity" value={item.clarity}
+                onChange={(e) => handleItemChange(index, 'clarity', e.target.value.toUpperCase())}
+                className="border p-3 rounded-lg" required />
+              <input type="number" step="0.01" placeholder="Carrot (CT)" value={item.ct}
+                onChange={(e) => handleItemChange(index, 'ct', e.target.value)}
+                className="border p-3 rounded-lg" required />
+              <input type="text" placeholder="Color" value={item.color}
+                onChange={(e) => handleItemChange(index, 'color', e.target.value.toUpperCase())}
+                className="border p-3 rounded-lg" required />
+              <input type="number" step="0.01" placeholder="Rate" value={item.rate}
+                onChange={(e) => handleItemChange(index, 'rate', e.target.value)}
+                className="border p-3 rounded-lg" required />
+              <input value={item.amount} readOnly className="border p-3 rounded-lg bg-gray-100" />
+              <button type="button" onClick={() => removeItem(index)} className="text-red-600">Remove</button>
             </div>
-          )}
+          ))}
 
-          <form onSubmit={handleSubmit} className="space-y-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <input name="name" placeholder="Customer Name" value={customer.name} onChange={handleCustomerChange}
-                className="border border-gray-300 p-3 rounded-lg" required />
-              <input name="phone" placeholder="Phone Number" value={customer.phone} onChange={handleCustomerChange}
-                className="border border-gray-300 p-3 rounded-lg" required />
-              <input name="address" placeholder="Address" value={customer.address} onChange={handleCustomerChange}
-                className="border border-gray-300 p-3 rounded-lg" />
-            </div>
+          <button type="button" onClick={addNewItem}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold">
+            + Add Item
+          </button>
 
-            <hr className="border-t-2 border-gray-200" />
+          <div className="text-right space-y-2 text-lg mt-6">
+            <div>Subtotal: AED {subtotal.toFixed(2)}</div>
+            <div>VAT ({GST_RATE}%): AED {gstAmount.toFixed(2)}</div>
+            <div className="font-bold text-2xl text-yellow-700">Grand Total: AED {grandTotal.toFixed(2)}</div>
+          </div>
 
-            {/* Container for items with max-height and overflow */}
-            <div className="space-y-4 max-h-96 overflow-y-auto pr-2"> {/* pr-2 for scrollbar space */}
-              {items.map((item, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center"> {/* Original item grid */}
-                  <select value={item.type} onChange={(e) => handleItemChange(index, 'type', e.target.value)}
-                    className="border p-3 rounded-lg md:col-span-1" required> {/* Adjusted col-span for consistency */}
-                    <option value="" disabled>Select Type</option>
-                    <option value="Yellow Gold 18K">Yellow Gold 18K</option>
-                    <option value="White Gold 18K">White Gold 18K</option>
-                    <option value="Rose Gold 18K">Rose Gold 18K</option>
-                    <option value="Platinum">Platinum</option> {/* Corrected typo */}
-                  </select>
-                  <input placeholder="Item Name" value={item.itemName}
-                    onChange={(e) => handleItemChange(index, 'itemName', e.target.value)}
-                    className="border p-3 rounded-lg md:col-span-2" required /> {/* Adjusted col-span */}
-                  <input type="number" step="0.01" placeholder="Weight (g)" value={item.weight}
-                    onChange={(e) => handleItemChange(index, 'weight', e.target.value)}
-                    className="border p-3 rounded-lg" required />
-                  <input type="text" placeholder="Clarity" value={item.clarity}
-                    onChange={(e) => handleItemChange(index, 'clarity', e.target.value.toUpperCase())}
-                    className="border p-3 rounded-lg" /> {/* Removed required as per original for some fields */}
-                  <input type="number" step="0.01" placeholder="Carrot (CT)" value={item.ct}
-                    onChange={(e) => handleItemChange(index, 'ct', e.target.value)}
-                    className="border p-3 rounded-lg" />
-                  <input type="text" placeholder="Color" value={item.color}
-                    onChange={(e) => handleItemChange(index, 'color', e.target.value.toUpperCase())}
-                    className="border p-3 rounded-lg" />
-                  <input type="number" step="0.01" placeholder="Rate" value={item.rate}
-                    onChange={(e) => handleItemChange(index, 'rate', e.target.value)}
-                    className="border p-3 rounded-lg" required />
-                  {/* Amount and Remove button will wrap naturally based on the 7-column grid in the original design */}
-                  <input value={item.amount} readOnly className="border p-3 rounded-lg bg-gray-100 md:col-start-1" /> {/* Suggest starting col for amount on new line on md */}
-                  <button type="button" onClick={() => removeItem(index)} className="text-red-600 hover:text-red-800 md:col-start-2">Remove</button> {/* Suggest starting col for remove */}
-                </div>
-              ))}
-            </div>
-
-            <button type="button" onClick={addNewItem}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold">
-              + Add Item
+          <div className="text-center">
+            <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-lg text-lg font-bold">
+              Create Invoice
             </button>
-
-            <div className="text-right space-y-2 text-lg mt-6">
-              <div>Subtotal: AED {subtotal.toFixed(2)}</div>
-              <div>VAT ({GST_RATE}%): AED {gstAmount.toFixed(2)}</div>
-              <div className="font-bold text-2xl text-yellow-700">Grand Total: AED {grandTotal.toFixed(2)}</div>
-            </div>
-
-            <div className="text-center">
-              <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-lg text-lg font-bold">
-                Create Invoice
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   );
 };
 
 export default CreateInvoice;
+
