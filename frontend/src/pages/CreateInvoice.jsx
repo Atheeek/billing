@@ -85,7 +85,7 @@ const CreateInvoice = () => {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="bg-white shadow-2xl rounded-2xl p-8">
-        <h2 className="text-4xl font-bold text-center mb-8 text-yellow-800">Create New Invoice</h2>
+        {/* <h2 className="text-4xl font-bold text-center mb-8 text-yellow-800">Create New Invoice</h2> */}
 
         {successMessage && (
           <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-lg text-center font-semibold">
@@ -143,7 +143,7 @@ const CreateInvoice = () => {
             + Add Item
           </button>
 
-          <div className="text-right space-y-2 text-lg mt-6">
+          <div className="text-right space-y-2 text-lg ">
             <div>Subtotal: AED {subtotal.toFixed(2)}</div>
             <div>VAT ({GST_RATE}%): AED {gstAmount.toFixed(2)}</div>
             <div className="font-bold text-2xl text-yellow-700">Grand Total: AED {grandTotal.toFixed(2)}</div>
