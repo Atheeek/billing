@@ -277,14 +277,15 @@ const ViewInvoices = () => {
        const vat = (item.amount * 0.05).toFixed(2); // Original VAT calculation based on item.amount
        const total = (item.amount + parseFloat(vat)).toFixed(2); // Original Total calculation
 
-      const desc = [
-        item.itemName && `Diamond ${item.itemName}`,
-        item.ct && `Diamond: ${item.ct} CT`,
-        item.clarity && `Clarity: ${item.clarity}`,
-        item.color && `Color: ${item.color}`,
-        item.material && `Material: ${item.material}`,
-        item.type && `${item.type} - ${item.weight} GM`,
-      ].filter(Boolean).join('\n\n');
+  const desc = [
+  item.itemName && `${item.type} ${item.itemName}`,
+  item.ct && `${item.type}: ${item.ct} CT`,
+  item.clarity && `Clarity: ${item.clarity}`,
+  item.color && `Color: ${item.color}`,
+  item.material && `Material: ${item.material}`,
+  item.type && `${item.type} - ${item.weight} GM`,
+].filter(Boolean).join('\n\n');
+
 
 
       return [
