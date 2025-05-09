@@ -113,6 +113,7 @@ const CreateInvoice = () => {
                 <option value="Yellow Gold 18K">Yellow Gold 18K</option>
                 <option value="White Gold 18K">White Gold 18K</option>
                 <option value="Rose Gold 18K">Rose Gold 18K</option>
+                <option value="Rose Gold 18K">Platinum</option>
               </select>
               <input placeholder="Item Name" value={item.itemName}
                 onChange={(e) => handleItemChange(index, 'itemName', e.target.value)}
