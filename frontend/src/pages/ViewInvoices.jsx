@@ -387,7 +387,7 @@ const ViewInvoices = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="container mx-2 ">
       {/* <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-gray-800">
         All Invoices
       </h2> */}
