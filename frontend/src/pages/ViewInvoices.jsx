@@ -441,7 +441,6 @@ const ViewInvoices = () => {
                     )}
 
                     {/* Item level details */}
-                     <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200 text-center">{index + 1}</td> {/* Serial number */}
                     <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-800 border-r border-gray-200">
                       {item.type}
                     </td>
