@@ -401,7 +401,6 @@ const ViewInvoices = () => {
                 <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-20 min-w-[5rem]">Date</th> {/* Min-width */}
                 <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-32 min-w-[8rem]">Customer</th> {/* Abbreviated, min-width */}
                 <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-24 min-w-[6rem]">Phone</th> {/* Min-width */}
-                <th className="py-3 px-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-12 min-w-[3rem]">Sl.No</th> {/* Narrow min-width */}
                 <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-24 min-w-[6rem]">Item Type</th> {/* Min-width */}
                 <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-32 min-w-[8rem]">Item Name</th> {/* Min-width */}
                 <th className="py-3 px-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider border-b border-gray-200 w-20 min-w-[5rem]">Clarity</th> {/* Min-width */}
