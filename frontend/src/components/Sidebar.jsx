@@ -23,7 +23,7 @@ const Sidebar = () => {
           alt="Sky Diamond Dreams Logo"
           className="mx-auto mb-4 w-24 h-auto object-contain"
         />
-        <h2 className="text-3xl font-extrabold text-amber-200 mb-10 text-center font-serif tracking-wide">
+        <h2 className="text-2xl font-extrabold text-amber-200 mb-10 text-center font-serif tracking-wide">
           Sky<span className="text-amber-200"> Diamond Dreams L.L.C</span>
         </h2>
 
