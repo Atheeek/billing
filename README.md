@@ -20,20 +20,7 @@ This software is designed for businesses (like jewelry stores, small retailers, 
 
 ## 📁 Project Structure
 
-billing-software/
-├── backend/               # Node.js + Express + MongoDB
-│   ├── models/            # Mongoose models
-│   ├── routes/            # API routes
-│   ├── server.js          # Entry point
-│   └── .env               # Backend environment variables
-│
-└── frontend/              # React + Vite + Tailwind
-    ├── src/
-    │   ├── components/    # UI components
-    │   ├── pages/         # Pages like Dashboard, Create Invoice
-    │   └── main.jsx       # Frontend entry point
-    └── .env               # Frontend environment variables
-
+<pre> ``` billing-software/ ├── backend/ # Node.js + Express + MongoDB │ ├── models/ # Mongoose models │ ├── routes/ # API routes │ ├── server.js # Entry point │ └── .env # Backend environment variables │ └── frontend/ # React + Vite + Tailwind ├── src/ │ ├── components/ # UI components │ ├── pages/ # Pages like Dashboard, Create Invoice │ └── main.jsx # Frontend entry point └── .env # Frontend environment variables ``` </pre>
 ---
 
 ## 🔧 Technologies
